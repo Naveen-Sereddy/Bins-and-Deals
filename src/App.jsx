@@ -9,6 +9,7 @@ import {
   Wrench, Sparkles, CreditCard, Banknote, RefreshCw,
 } from 'lucide-react'
 import pricingPoster from './assets/pricing-poster.jpg'
+import clawMachineImg from './assets/claw-machine.jpg'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const MINT   = '#00C896'
@@ -987,6 +988,166 @@ function TreasureHunt() {
   )
 }
 
+// ─── CLAW MACHINE ────────────────────────────────────────────────────────────
+const PURPLE = '#9333EA'
+const PURPLE_GLOW = 'rgba(147,51,234,0.55)'
+const YELLOW_BRIGHT = '#FACC15'
+
+function ClawMachine() {
+  return (
+    <>
+      <SectionDivider />
+      <section id="claw-machine" className="py-28 overflow-hidden relative" style={{ background: DARK }}>
+        {/* Purple & yellow mesh blobs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute w-[600px] h-[600px] rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(147,51,234,0.14) 0%, transparent 65%)', top: '-10%', left: '-8%' }}
+            animate={{ x: [0, 50, -30, 0], y: [0, -40, 50, 0] }}
+            transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <motion.div
+            className="absolute w-[500px] h-[500px] rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(250,204,21,0.08) 0%, transparent 65%)', bottom: '5%', right: '-5%' }}
+            animate={{ x: [0, -40, 30, 0], y: [0, 50, -40, 0] }}
+            transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut', delay: 3 }}
+          />
+          <motion.div
+            className="absolute w-[400px] h-[400px] rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(147,51,234,0.09) 0%, transparent 65%)', top: '50%', right: '20%' }}
+            animate={{ x: [0, 60, -20, 0], y: [0, -30, 60, 0] }}
+            transition={{ duration: 32, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
+          />
+        </div>
+
+        <Particles count={14} />
+
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+          {/* Section header */}
+          <Reveal variants={stagger} className="text-center mb-16">
+            <motion.p
+              variants={fadeUp}
+              className="font-bold uppercase tracking-[0.2em] text-xs mb-5"
+              style={{ color: PURPLE }}
+            >
+              In-Store Fun
+            </motion.p>
+            <motion.h2
+              variants={fadeUp}
+              className="text-[clamp(2.2rem,5vw,4.5rem)] leading-tight font-black mb-5 heading-underline-purple"
+              style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                background: `linear-gradient(135deg, ${PURPLE} 0%, #c084fc 40%, ${YELLOW_BRIGHT} 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                display: 'inline-block',
+              }}
+            >
+              🎮 Claw Machine — Fun for the Whole Family!
+            </motion.h2>
+          </Reveal>
+
+          {/* Content: image + text */}
+          <div className="grid lg:grid-cols-2 gap-14 items-center">
+            {/* Image */}
+            <Reveal variants={stagger}>
+              <motion.div
+                variants={slideLeft}
+                className="relative rounded-3xl overflow-hidden"
+                style={{
+                  boxShadow: `0 0 0 2px rgba(147,51,234,0.3), 0 24px 80px ${PURPLE_GLOW}, 0 4px 24px rgba(0,0,0,0.7)`,
+                }}
+              >
+                {/* Floating glow behind image */}
+                <div
+                  className="absolute -inset-2 rounded-3xl pointer-events-none"
+                  style={{ background: `radial-gradient(ellipse at center, rgba(147,51,234,0.18) 0%, transparent 70%)`, zIndex: 0 }}
+                />
+                <img
+                  src={clawMachineImg}
+                  alt="Claw Machine at Bins and Deals"
+                  className="w-full h-full object-cover relative z-10"
+                  style={{ maxHeight: '560px', display: 'block' }}
+                />
+                {/* Corner badge */}
+                <div
+                  className="absolute top-4 left-4 z-20 px-4 py-2 rounded-full font-black text-sm uppercase tracking-wider text-white"
+                  style={{
+                    background: `linear-gradient(135deg, ${PURPLE} 0%, #7c3aed 100%)`,
+                    boxShadow: `0 4px 20px ${PURPLE_GLOW}`,
+                  }}
+                >
+                  🎮 In Store Now!
+                </div>
+              </motion.div>
+            </Reveal>
+
+            {/* Text */}
+            <Reveal variants={stagger}>
+              <div className="flex flex-col gap-7">
+                <motion.p
+                  variants={slideRight}
+                  className="text-gray-300 text-xl leading-relaxed"
+                >
+                  We have an exciting claw machine right inside our store! Perfect for kids and adults alike. Try your luck and win amazing prizes!
+                </motion.p>
+
+                {/* Glowing token badge */}
+                <motion.div
+                  variants={slideRight}
+                  className="claw-token-badge relative inline-flex items-center justify-center gap-3 rounded-2xl px-8 py-5 text-center self-start"
+                  style={{
+                    background: `linear-gradient(135deg, rgba(147,51,234,0.2) 0%, rgba(250,204,21,0.1) 100%)`,
+                    border: `2px solid rgba(147,51,234,0.5)`,
+                  }}
+                >
+                  <span className="text-2xl font-black text-white tracking-wide">🪙 $1 = 4 Tokens — Play &amp; Win!</span>
+                </motion.div>
+
+                <motion.p
+                  variants={slideRight}
+                  className="text-lg font-semibold leading-relaxed"
+                  style={{ color: 'rgba(196,148,255,0.85)' }}
+                >
+                  While you shop, let the kids play! Hours of fun waiting for you at Bins &amp; Deals.
+                </motion.p>
+
+                {/* Star row */}
+                <motion.div variants={slideRight} className="flex items-center gap-2">
+                  {['🎮','🏆','🎊','⭐','🎁'].map((e, i) => (
+                    <motion.span
+                      key={i}
+                      className="text-2xl"
+                      animate={{ y: [0, -6, 0] }}
+                      transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.25, ease: 'easeInOut' }}
+                    >
+                      {e}
+                    </motion.span>
+                  ))}
+                </motion.div>
+
+                {/* CTA */}
+                <motion.a
+                  variants={slideRight}
+                  href="#location"
+                  className="self-start inline-flex items-center gap-3 font-black px-8 py-4 rounded-full text-sm uppercase tracking-wider text-white transition-opacity hover:opacity-90"
+                  style={{
+                    background: `linear-gradient(135deg, ${PURPLE} 0%, #7c3aed 60%, ${YELLOW_BRIGHT} 100%)`,
+                    boxShadow: `0 6px 30px ${PURPLE_GLOW}, 0 2px 8px rgba(250,204,21,0.2)`,
+                  }}
+                >
+                  <MapPin size={16} strokeWidth={2.5} /> Come Visit Us
+                </motion.a>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </>
+  )
+}
+
 // ─── HOURS ───────────────────────────────────────────────────────────────────
 function Hours() {
   const days = [
@@ -1448,6 +1609,7 @@ export default function App() {
       <About />
       <Products />
       <TreasureHunt />
+      <ClawMachine />
       <Hours />
       <Location />
       <FindUsOnline />

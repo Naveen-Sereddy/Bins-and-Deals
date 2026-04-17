@@ -190,4 +190,42 @@
     background: linear-gradient(175deg, #050505 0%, #0a0f0a 50%, #050505 100%);
   }
 
+  /* ── Claw Machine token badge glow animation ── */
+  @keyframes claw-glow-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 12px rgba(147,51,234,0.8),
+        0 0 30px rgba(147,51,234,0.5),
+        0 0 60px rgba(147,51,234,0.25),
+        0 0 8px rgba(250,204,21,0.4);
+      border-color: rgba(147,51,234,0.7);
+    }
+    50% {
+      box-shadow:
+        0 0 18px rgba(250,204,21,0.9),
+        0 0 45px rgba(250,204,21,0.55),
+        0 0 80px rgba(250,204,21,0.25),
+        0 0 12px rgba(147,51,234,0.5);
+      border-color: rgba(250,204,21,0.8);
+    }
+  }
+
+  .claw-token-badge {
+    animation: claw-glow-pulse 2.2s ease-in-out infinite;
+  }
+
+  /* ── Purple heading underline ── */
+  .heading-underline-purple {
+    position: relative;
+  }
+  .heading-underline-purple::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #9333EA 0%, #FACC15 100%);
+    border-radius: 3px;
+    box-shadow: 0 0 12px rgba(147,51,234,0.7), 0 0 24px rgba(250,204,21,0.3);
+  }
+
 }
