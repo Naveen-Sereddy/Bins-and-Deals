@@ -344,15 +344,10 @@ function TreasureHunt() {
           </motion.p>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-stretch">
-          <Reveal className="flex">
-            <motion.div variants={fadeUp} className="rounded-2xl overflow-hidden w-full">
-              <img src={pricingPoster} alt="Treasure Hunt Pricing System" className="w-full h-full object-cover" style={{ display: 'block', minHeight: '200px' }} />
-            </motion.div>
-          </Reveal>
-
-          <Reveal>
-            <div className="flex flex-col gap-3">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
+          {/* Pricing cards — render first so we can use their natural height as reference */}
+          <Reveal className="w-full lg:w-1/2 order-2 lg:order-1">
+            <div className="flex flex-col gap-3" id="pricing-cards">
               {tags.map(({ color, label, price }) => (
                 <motion.div
                   key={label}
@@ -379,6 +374,20 @@ function TreasureHunt() {
                 Prices drop daily. The earlier you shop, the more you save.
               </motion.p>
             </div>
+          </Reveal>
+
+          {/* Poster — sized to match cards height */}
+          <Reveal className="w-full sm:max-w-sm lg:w-1/2 lg:max-w-none order-1 lg:order-2 flex justify-center">
+            <motion.div
+              variants={fadeUp}
+              className="rounded-2xl overflow-hidden w-full sm:max-w-sm lg:max-w-md"
+            >
+              <img
+                src={pricingPoster}
+                alt="Treasure Hunt Pricing System"
+                className="w-full h-auto object-contain block"
+              />
+            </motion.div>
           </Reveal>
         </div>
       </div>
