@@ -258,6 +258,7 @@ function Hero() {
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             color: '#7ED957',
+            WebkitTextStroke: '1px rgba(255,255,255,0.75)',
             marginBottom: '1.5rem',
           }}
         >
@@ -480,7 +481,7 @@ function ClawMachine() {
               <img
                 src={clawMachineImg}
                 alt="Claw Machine at Bins and Deals"
-                className="max-h-[300px] lg:max-h-[450px] w-auto object-contain block"
+                className="max-h-[320px] lg:max-h-[500px] w-auto object-contain block"
               />
             </motion.div>
           </Reveal>
