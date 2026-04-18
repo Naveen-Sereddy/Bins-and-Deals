@@ -89,8 +89,8 @@ function Navbar() {
             fontWeight: 900,
             fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)',
             color: '#7ED957',
-            WebkitTextStroke: '2px white',
-            textShadow: '3px 3px 0px #000000',
+            WebkitTextStroke: '1px white',
+            textShadow: '2px 2px 0px #000000',
             letterSpacing: '0.05em',
             textTransform: 'uppercase',
             lineHeight: 1,
@@ -249,13 +249,14 @@ function Hero() {
           style={{
             fontFamily: "'Poppins', sans-serif",
             fontWeight: 900,
-            fontSize: 'clamp(3.5rem, 13vw, 9.5rem)',
+            fontSize: 'clamp(2.8rem, 10vw, 8rem)',
             lineHeight: 0.92,
             letterSpacing: '0.04em',
             textTransform: 'uppercase',
+            whiteSpace: 'nowrap',
             color: '#7ED957',
-            WebkitTextStroke: '3px white',
-            textShadow: '4px 4px 0px #000000, 6px 6px 8px rgba(0,0,0,0.4)',
+            WebkitTextStroke: '1.5px white',
+            textShadow: '3px 3px 0px #000000',
             marginBottom: '1.5rem',
           }}
         >
@@ -301,7 +302,7 @@ function Hero() {
           className="mt-10 flex items-center justify-center gap-2 text-gray-600 text-sm"
         >
           <Clock size={13} color={MINT} />
-          Mon–Sat 10AM–8PM &nbsp;·&nbsp; Sun 11AM–7PM
+          Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
         </motion.div>
       </div>
 
@@ -339,14 +340,14 @@ function TreasureHunt() {
             TREASURE HUNT SAVINGS
           </motion.h2>
           <motion.p variants={fadeUp} className="text-gray-500 text-base max-w-lg mx-auto">
-            Every item is color-tagged for easy pricing — no guessing, no haggling.
+            Every item is color-tagged for easy pricing. No guessing, no haggling.
           </motion.p>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <Reveal>
-            <motion.div variants={fadeUp} className="rounded-2xl overflow-hidden">
-              <img src={pricingPoster} alt="Treasure Hunt Pricing System" className="w-full object-cover" />
+        <div className="grid lg:grid-cols-2 gap-12 items-stretch">
+          <Reveal className="flex">
+            <motion.div variants={fadeUp} className="rounded-2xl overflow-hidden w-full">
+              <img src={pricingPoster} alt="Treasure Hunt Pricing System" className="w-full h-full object-cover" style={{ display: 'block', minHeight: '200px' }} />
             </motion.div>
           </Reveal>
 
@@ -375,7 +376,7 @@ function TreasureHunt() {
                 </motion.div>
               ))}
               <motion.p variants={fadeUp} className="text-gray-600 text-xs mt-3 text-center">
-                Prices drop daily — the earlier you shop, the more you save.
+                Prices drop daily. The earlier you shop, the more you save.
               </motion.p>
             </div>
           </Reveal>
@@ -411,13 +412,13 @@ function ClawMachine() {
             <motion.div
               variants={fadeUp}
               className="rounded-2xl overflow-hidden"
-              style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ border: '1px solid rgba(255,255,255,0.06)', background: '#0a0a0a' }}
             >
               <img
                 src={clawMachineImg}
                 alt="Claw Machine at Bins and Deals"
-                className="w-full object-cover"
-                style={{ maxHeight: '520px', display: 'block' }}
+                className="w-full"
+                style={{ display: 'block', objectFit: 'contain', width: '100%' }}
               />
             </motion.div>
           </Reveal>
@@ -425,7 +426,7 @@ function ClawMachine() {
           <Reveal>
             <div className="flex flex-col gap-6">
               <motion.p variants={fadeUp} className="text-gray-300 text-lg leading-relaxed">
-                We have an exciting claw machine right inside our store! Perfect for kids and adults alike — try your luck and win amazing prizes!
+                We have an exciting claw machine right inside our store! Perfect for kids and adults alike. Try your luck and win amazing prizes!
               </motion.p>
 
               <motion.div
@@ -461,7 +462,7 @@ function ClawMachine() {
 function About() {
   const stats = [
     { display: '1000s+', label: 'Items In Stock' },
-    { display: '40–50%', label: 'Off Retail Prices' },
+    { display: '40-50%', label: 'Off Retail Prices' },
     { display: '8',      label: 'Categories' },
     { display: '7',      label: 'Days a Week' },
   ]
@@ -469,18 +470,21 @@ function About() {
   return (
     <section id="about" className="py-24 relative" style={{ background: '#080d08' }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
+        <Reveal className="text-center mb-14">
+          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
+            About Us
+          </motion.p>
+          <motion.h2
+            variants={fadeUp}
+            className="text-[clamp(2.8rem,6vw,5.5rem)] font-black text-white leading-tight"
+            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+          >
+            YOUR LOCAL DEAL DESTINATION
+          </motion.h2>
+        </Reveal>
+
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <Reveal>
-            <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-4" style={{ color: MINT }}>
-              About Us
-            </motion.p>
-            <motion.h2
-              variants={fadeUp}
-              className="text-[clamp(2.8rem,6vw,5rem)] font-black text-white leading-tight mb-6"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-            >
-              YOUR LOCAL<br />DEAL DESTINATION
-            </motion.h2>
             <motion.p variants={fadeUp} className="text-gray-400 text-lg leading-relaxed mb-4">
               At <strong className="text-white">Bins and Deals</strong>, we believe everyone deserves access to quality products without breaking the bank. Our store is packed with{' '}
               <strong style={{ color: MINT }}>new, refurbished, and gently used items</strong> across every category, all priced far below retail.
@@ -557,7 +561,7 @@ function Products() {
             SOMETHING FOR EVERYONE
           </motion.h2>
           <motion.p variants={fadeUp} className="text-gray-500 text-base max-w-lg mx-auto mt-4">
-            Thousands of items across every category — new, refurbished, and used — all at prices that make you do a double-take.
+            Thousands of items across every category: new, refurbished, and used. All at prices that make you do a double-take.
           </motion.p>
         </Reveal>
 
@@ -599,7 +603,7 @@ function Products() {
               NEW INVENTORY EVERY WEEK
             </h3>
             <p className="text-white/70 text-base mb-7 max-w-md mx-auto">
-              Deals change constantly — stop in often or give us a call to hear about our latest arrivals.
+              Deals change constantly. Stop in often or give us a call to hear about our latest arrivals.
             </p>
             <a
               href="tel:8162224238"
@@ -709,8 +713,8 @@ function Location() {
     },
     {
       icon: Clock,
-      title: 'Mon–Sat: 10AM–8PM',
-      sub: 'Sunday: 11AM–7PM',
+      title: 'Mon-Sat: 10AM-8PM',
+      sub: 'Sunday: 11AM-7PM',
       detail: 'Open 7 days a week',
     },
   ]
@@ -803,13 +807,13 @@ function Location() {
 // ─── HOURS ───────────────────────────────────────────────────────────────────
 function Hours() {
   const days = [
-    { day: 'Monday',    hours: '10:00 AM – 8:00 PM' },
-    { day: 'Tuesday',   hours: '10:00 AM – 8:00 PM' },
-    { day: 'Wednesday', hours: '10:00 AM – 8:00 PM' },
-    { day: 'Thursday',  hours: '10:00 AM – 8:00 PM' },
-    { day: 'Friday',    hours: '10:00 AM – 8:00 PM' },
-    { day: 'Saturday',  hours: '10:00 AM – 8:00 PM' },
-    { day: 'Sunday',    hours: '11:00 AM – 7:00 PM' },
+    { day: 'Monday',    hours: '10:00 AM - 8:00 PM' },
+    { day: 'Tuesday',   hours: '10:00 AM - 8:00 PM' },
+    { day: 'Wednesday', hours: '10:00 AM - 8:00 PM' },
+    { day: 'Thursday',  hours: '10:00 AM - 8:00 PM' },
+    { day: 'Friday',    hours: '10:00 AM - 8:00 PM' },
+    { day: 'Saturday',  hours: '10:00 AM - 8:00 PM' },
+    { day: 'Sunday',    hours: '11:00 AM - 7:00 PM' },
   ]
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 
@@ -828,7 +832,7 @@ function Hours() {
             COME SEE US
           </motion.h2>
           <motion.p variants={fadeUp} className="text-gray-500 text-base mt-4">
-            Open 7 days a week — because deals don't take days off.
+            Open 7 days a week. Deals don't take days off.
           </motion.p>
         </Reveal>
 
@@ -945,8 +949,8 @@ function Footer() {
           <div>
             <h4 className="text-xs font-bold uppercase tracking-widest text-gray-600 mb-4">Store Hours</h4>
             <div className="space-y-2 text-sm">
-              <p className="text-gray-600"><span className="text-gray-300 font-semibold">Mon–Sat:</span> 10:00 AM – 8:00 PM</p>
-              <p className="text-gray-600"><span className="text-gray-300 font-semibold">Sunday:</span> 11:00 AM – 7:00 PM</p>
+              <p className="text-gray-600"><span className="text-gray-300 font-semibold">Mon-Sat:</span> 10:00 AM - 8:00 PM</p>
+              <p className="text-gray-600"><span className="text-gray-300 font-semibold">Sunday:</span> 11:00 AM - 7:00 PM</p>
             </div>
           </div>
           <div>
