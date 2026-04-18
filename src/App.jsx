@@ -398,26 +398,26 @@ function TreasureHunt() {
 // ─── CLAW MACHINE ────────────────────────────────────────────────────────────
 function ClawMachine() {
   return (
-    <section id="claw-machine" className="py-24 relative" style={{ background: DARK }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+    <section id="claw-machine" className="py-16 relative min-h-[80vh] flex items-center" style={{ background: DARK }}>
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 w-full">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             In-Store Fun
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-white leading-tight"
+            className="text-[clamp(2rem,5vw,4rem)] font-black text-white leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             CLAW MACHINE
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-gray-500 text-base mt-3">
+          <motion.p variants={fadeUp} className="text-gray-500 text-sm mt-2">
             Fun for the whole family!
           </motion.p>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <Reveal>
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-10">
+          <Reveal className="flex justify-center shrink-0">
             <motion.div
               variants={fadeUp}
               className="rounded-2xl overflow-hidden"
@@ -426,28 +426,27 @@ function ClawMachine() {
               <img
                 src={clawMachineImg}
                 alt="Claw Machine at Bins and Deals"
-                className="w-full"
-                style={{ display: 'block', objectFit: 'contain', width: '100%' }}
+                className="max-h-[300px] lg:max-h-[420px] w-auto object-contain block"
               />
             </motion.div>
           </Reveal>
 
-          <Reveal>
-            <div className="flex flex-col gap-6">
-              <motion.p variants={fadeUp} className="text-gray-300 text-lg leading-relaxed">
+          <Reveal className="w-full lg:max-w-lg">
+            <div className="flex flex-col gap-5">
+              <motion.p variants={fadeUp} className="text-gray-300 text-base leading-relaxed">
                 We have an exciting claw machine right inside our store! Perfect for kids and adults alike. Try your luck and win amazing prizes!
               </motion.p>
 
               <motion.div
                 variants={fadeUp}
-                className="inline-flex items-center gap-3 rounded-xl px-6 py-4 self-start"
+                className="inline-flex items-center gap-3 rounded-xl px-5 py-3.5 self-start"
                 style={{ background: 'rgba(0,200,150,0.07)', border: '1px solid rgba(0,200,150,0.18)' }}
               >
-                <span className="text-xl font-black text-white">🪙 $1 = 4 Tokens</span>
+                <span className="text-lg font-black text-white">🪙 $1 = 4 Tokens</span>
                 <span className="text-sm font-semibold" style={{ color: MINT }}>Play &amp; Win!</span>
               </motion.div>
 
-              <motion.p variants={fadeUp} className="text-gray-400 text-base leading-relaxed">
+              <motion.p variants={fadeUp} className="text-gray-400 text-sm leading-relaxed">
                 While you shop, let the kids play! Hours of fun waiting for you at Bins &amp; Deals.
               </motion.p>
 
