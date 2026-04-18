@@ -82,24 +82,26 @@ function Navbar() {
       }}
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
-        <a
-          href="#hero"
-          style={{
-            fontFamily: "'Poppins', sans-serif",
-            fontWeight: 900,
-            fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)',
-            color: '#7ED957',
-            WebkitTextStroke: '1px white',
-            textShadow: '2px 2px 0px #000000',
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            lineHeight: 1,
-          }}
-        >
-          BINS &amp; DEALS
-        </a>
+        {/* Logo */}
+        <div className="shrink-0">
+          <a
+            href="#hero"
+            style={{
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 900,
+              fontSize: 'clamp(1.1rem, 2.5vw, 1.35rem)',
+              color: '#7ED957',
+              letterSpacing: '0.05em',
+              textTransform: 'uppercase',
+              lineHeight: 1,
+            }}
+          >
+            BINS &amp; DEALS
+          </a>
+        </div>
 
-        <div className="hidden lg:flex items-center gap-7">
+        {/* Nav links — centered */}
+        <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
           {links.map(l => (
             <a
               key={l.label}
@@ -111,7 +113,8 @@ function Navbar() {
           ))}
         </div>
 
-        <div className="hidden lg:flex items-center gap-2">
+        {/* Right action buttons */}
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
           <a
             href="https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr"
             target="_blank"
@@ -238,7 +241,7 @@ function Hero() {
             className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs font-bold uppercase tracking-widest"
             style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.18)', color: MINT }}
           >
-            Liberty, MO's Best Deals
+            Missouri's Best Deals
           </div>
         </motion.div>
 
@@ -255,8 +258,6 @@ function Hero() {
             textTransform: 'uppercase',
             whiteSpace: 'nowrap',
             color: '#7ED957',
-            WebkitTextStroke: '1.5px white',
-            textShadow: '3px 3px 0px #000000',
             marginBottom: '1.5rem',
           }}
         >
@@ -395,6 +396,59 @@ function TreasureHunt() {
   )
 }
 
+// ─── MORE WAYS TO SAVE ───────────────────────────────────────────────────────
+function ShelfDeals() {
+  const features = [
+    { icon: Tag,      label: 'Individually Priced',    desc: 'Every shelf item is clearly marked — no surprise costs at checkout.' },
+    { icon: Star,     label: 'Up to 50% Off Amazon',   desc: 'Shelf items typically priced 40-50% below Amazon retail.' },
+    { icon: ArrowRight, label: 'New Items Regularly',  desc: 'Fresh shelf stock added alongside our bin rotation every week.' },
+  ]
+
+  return (
+    <section id="shelf-deals" className="py-24 relative" style={{ background: '#080d08' }}>
+      <div className="max-w-5xl mx-auto px-5 sm:px-8">
+        <Reveal className="text-center mb-14">
+          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
+            Shelf Deals
+          </motion.p>
+          <motion.h2
+            variants={fadeUp}
+            className="text-[clamp(2.5rem,7vw,5rem)] font-black text-white leading-tight mb-4"
+            style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+          >
+            MORE WAYS TO SAVE
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-gray-400 text-base max-w-2xl mx-auto leading-relaxed">
+            In addition to our bin pricing system, we also offer shelf items throughout the store. Each item is individually priced and typically 40-50% lower than Amazon prices, giving you even more ways to save on quality products.
+          </motion.p>
+        </Reveal>
+
+        <Reveal>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {features.map(({ icon: Icon, label, desc }) => (
+              <motion.div
+                key={label}
+                variants={fadeUp}
+                className="rounded-xl p-6 text-center"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+              >
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 mx-auto"
+                  style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.12)' }}
+                >
+                  <Icon size={19} color={MINT} />
+                </div>
+                <h3 className="font-black text-white text-sm mb-2">{label}</h3>
+                <p className="text-gray-600 text-xs leading-relaxed">{desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 // ─── CLAW MACHINE ────────────────────────────────────────────────────────────
 function ClawMachine() {
   return (
@@ -426,7 +480,7 @@ function ClawMachine() {
               <img
                 src={clawMachineImg}
                 alt="Claw Machine at Bins and Deals"
-                className="max-h-[300px] lg:max-h-[420px] w-auto object-contain block"
+                className="max-h-[300px] lg:max-h-[450px] w-auto object-contain block"
               />
             </motion.div>
           </Reveal>
@@ -999,6 +1053,7 @@ export default function App() {
       <Navbar />
       <Hero />
       <TreasureHunt />
+      <ShelfDeals />
       <ClawMachine />
       <About />
       <Products />
