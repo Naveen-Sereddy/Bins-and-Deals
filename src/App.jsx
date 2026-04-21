@@ -87,7 +87,7 @@ function Navbar() {
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
       }}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
+      <div className="max-w-7xl mx-auto pl-6 pr-4 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
         {/* Logo */}
         <div style={{ justifySelf: 'start' }}>
           <a
@@ -245,14 +245,14 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
 
       {/* ── Main content ── */}
-      <div className="flex-1 flex flex-col items-center justify-center relative z-20 w-full py-14 px-5 sm:px-8">
+      <div className="flex-1 flex flex-col items-center justify-center relative z-20 w-full py-8 sm:py-12 px-5 sm:px-8">
 
           {/* Trust badge pills */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-2 mb-7"
+            className="flex flex-wrap items-center justify-center gap-2 mb-4 mt-[-10px]"
           >
             {BADGES.map(b => (
               <span
