@@ -12,6 +12,12 @@ const MINT = '#00C896'
 const GOLD = '#FFD700'
 const DARK = '#050505'
 
+const GRID_BG = {
+  backgroundImage:
+    'linear-gradient(rgba(0,200,150,0.035) 1px, transparent 1px), linear-gradient(to right, rgba(0,200,150,0.035) 1px, transparent 1px)',
+  backgroundSize: '50px 50px',
+}
+
 const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
 const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }
 
@@ -228,17 +234,9 @@ function Hero() {
     <section
       id="hero"
       className="min-h-screen flex flex-col relative overflow-hidden"
-      style={{ background: DARK, paddingTop: '64px' }}
+      style={{ background: DARK, paddingTop: '64px', ...GRID_BG }}
     >
       {/* ── Background depth layers ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(0,200,150,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,150,0.022) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-        }}
-      />
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 55% at 50% 55%, rgba(0,200,150,0.07) 0%, transparent 70%)' }} />
       <div className="absolute pointer-events-none" style={{ width: 560, height: 560, top: '-12%', left: '-8%', background: 'radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%)' }} />
       <div className="absolute pointer-events-none" style={{ width: 460, height: 460, bottom: '5%', right: '-6%', background: 'radial-gradient(circle, rgba(0,200,150,0.06) 0%, transparent 70%)' }} />
@@ -409,7 +407,7 @@ function TreasureHunt() {
   ]
 
   return (
-    <section id="pricing" className="py-24 relative" style={{ background: '#080d08' }}>
+    <section id="pricing" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -487,7 +485,7 @@ function ShelfDeals() {
   ]
 
   return (
-    <section id="shelf-deals" className="py-24 relative" style={{ background: '#080d08' }}>
+    <section id="shelf-deals" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -534,7 +532,7 @@ function ShelfDeals() {
 // ─── CLAW MACHINE ────────────────────────────────────────────────────────────
 function ClawMachine() {
   return (
-    <section id="claw-machine" className="py-16 relative min-h-[80vh] flex items-center" style={{ background: DARK }}>
+    <section id="claw-machine" className="py-16 relative min-h-[80vh] flex items-center" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8 w-full">
         <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -612,7 +610,7 @@ function About() {
   ]
 
   return (
-    <section id="about" className="py-24 relative" style={{ background: '#080d08' }}>
+    <section id="about" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -691,7 +689,7 @@ function Products() {
   ]
 
   return (
-    <section id="products" className="py-24 relative" style={{ background: DARK }}>
+    <section id="products" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -781,7 +779,7 @@ function FindUsOnline() {
   ]
 
   return (
-    <section id="connect" className="py-24 relative" style={{ background: '#080d08' }}>
+    <section id="connect" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -864,7 +862,7 @@ function Location() {
   ]
 
   return (
-    <section id="location" className="py-24 relative" style={{ background: DARK }}>
+    <section id="location" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -962,7 +960,7 @@ function Hours() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 
   return (
-    <section id="hours" className="py-24 relative" style={{ background: '#080d08' }}>
+    <section id="hours" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
       <div className="max-w-2xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-12">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -1051,7 +1049,7 @@ function PaymentMethods() {
   ]
 
   return (
-    <div className="py-8 px-5 sm:px-8" style={{ background: '#020408', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+    <div className="py-8 px-5 sm:px-8" style={{ background: '#020408', borderTop: '1px solid rgba(255,255,255,0.04)', ...GRID_BG }}>
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
         <p className="text-gray-700 text-xs font-bold uppercase tracking-widest shrink-0">We Accept</p>
         <div className="w-px h-4 bg-white/10 hidden sm:block" />
@@ -1078,7 +1076,7 @@ function Footer() {
   return (
     <footer
       className="py-14 px-5 sm:px-8"
-      style={{ background: '#020408', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+      style={{ background: '#020408', borderTop: '1px solid rgba(255,255,255,0.05)', ...GRID_BG }}
     >
       <div className="max-w-7xl mx-auto">
         <div className="grid sm:grid-cols-3 gap-10 pb-10" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -1130,7 +1128,7 @@ function Footer() {
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
-    <div className="min-h-screen" style={{ background: DARK }}>
+    <div className="min-h-screen" style={{ background: DARK, ...GRID_BG }}>
       <BackToTop />
       <Navbar />
       <Hero />
