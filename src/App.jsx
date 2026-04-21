@@ -219,14 +219,6 @@ function Navbar() {
 }
 
 // ─── HERO ────────────────────────────────────────────────────────────────────
-const FLOATERS = [
-  { emoji: '🎧', price: '$3', top: '22%', left:  '4%',  delay: 0,   dur: 5.5, rot:  5 },
-  { emoji: '👟', price: '$5', top: '18%', right: '5%',  delay: 0.9, dur: 6.2, rot: -4 },
-  { emoji: '📱', price: '$7', top: '60%', left:  '3%',  delay: 1.4, dur: 4.9, rot:  3 },
-  { emoji: '🍳', price: '$2', top: '58%', right: '4%',  delay: 0.5, dur: 5.7, rot: -5 },
-  { emoji: '🎮', price: '$5', top: '40%', left:  '11%', delay: 1.8, dur: 4.6, rot:  4 },
-]
-
 const BADGES = ['New stock every week', 'Thousands of items', 'In-store treasure hunt']
 
 const TICKER_TEXT = '\u00a0\u00a0New inventory weekly\u00a0\u00a0·\u00a0\u00a0Limited time deals\u00a0\u00a0·\u00a0\u00a0First come, first served\u00a0\u00a0·\u00a0\u00a0Prices from $2\u00a0\u00a0·\u00a0\u00a0In-store only\u00a0\u00a0·\u00a0\u00a0'
@@ -252,37 +244,6 @@ function Hero() {
       <div className="absolute pointer-events-none" style={{ width: 460, height: 460, bottom: '5%', right: '-6%', background: 'radial-gradient(circle, rgba(0,200,150,0.06) 0%, transparent 70%)' }} />
       {/* vignette edges */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
-
-      {/* ── Floating product bubbles (hidden on small screens) ── */}
-      {FLOATERS.map(({ emoji, price, top, left, right, delay, dur, rot }, i) => (
-        <motion.div
-          key={i}
-          className="absolute pointer-events-none z-10 hidden sm:block"
-          style={{ top, left, right }}
-          animate={{ y: [0, -13, 0], rotate: [0, rot, 0] }}
-          transition={{ duration: dur, repeat: Infinity, delay, ease: 'easeInOut' }}
-        >
-          <div className="flex flex-col items-center gap-1">
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-[1.6rem]"
-              style={{
-                background: 'rgba(12,12,12,0.88)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
-              }}
-            >
-              {emoji}
-            </div>
-            <span
-              className="text-[10px] font-black px-2.5 py-0.5 rounded-full text-black"
-              style={{ background: MINT }}
-            >
-              {price}
-            </span>
-          </div>
-        </motion.div>
-      ))}
 
       {/* ── Main content ── */}
       <div className="flex-1 flex items-center justify-center relative z-20">
@@ -318,7 +279,8 @@ function Hero() {
               lineHeight: 0.88,
               letterSpacing: '0.03em',
               textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
+              textAlign: 'center',
+              width: '100%',
               color: '#7ED957',
               WebkitTextStroke: '1px rgba(255,255,255,0.72)',
               marginBottom: '0.25em',
