@@ -246,8 +246,7 @@ function Hero() {
       <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
 
       {/* ── Main content ── */}
-      <div className="flex-1 flex items-center justify-center relative z-20">
-        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center py-14">
+      <div className="flex-1 flex flex-col items-center justify-center relative z-20 w-full py-14 px-5 sm:px-8">
 
           {/* Trust badge pills */}
           <motion.div
@@ -267,7 +266,7 @@ function Hero() {
             ))}
           </motion.div>
 
-          {/* Store name */}
+          {/* Store name — full viewport width so centering is always true */}
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
@@ -281,10 +280,12 @@ function Hero() {
               textTransform: 'uppercase',
               textAlign: 'center',
               whiteSpace: 'nowrap',
-              width: '100%',
+              display: 'block',
+              width: '100vw',
+              marginLeft: 'calc(-50vw + 50%)',
               color: '#7ED957',
               WebkitTextStroke: '1px rgba(255,255,255,0.72)',
-              marginBottom: '0.25em',
+              marginBottom: '0.35em',
             }}
           >
             BINS &amp; DEALS
@@ -295,7 +296,7 @@ function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.18, duration: 0.45 }}
-            className="font-black text-white uppercase tracking-wide mb-5"
+            className="font-black text-white uppercase tracking-wide mb-5 text-center"
             style={{ fontSize: 'clamp(1rem, 3.2vw, 2rem)', letterSpacing: '0.06em' }}
           >
             Dig In. Find Crazy Deals.
@@ -306,7 +307,7 @@ function Hero() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26, duration: 0.45 }}
-            className="text-gray-400 text-base sm:text-lg mb-5 max-w-md mx-auto leading-relaxed"
+            className="text-gray-400 text-base sm:text-lg mb-5 max-w-md text-center leading-relaxed"
           >
             New, refurbished &amp; overstock items priced from <strong className="text-white">$2</strong>, right here in Liberty, MO.
           </motion.p>
@@ -363,7 +364,6 @@ function Hero() {
             <Clock size={13} color={MINT} />
             Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
           </motion.div>
-        </div>
       </div>
 
       {/* ── Scrolling ticker ── */}
