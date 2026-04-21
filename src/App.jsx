@@ -9,12 +9,14 @@ import pricingPoster from './assets/pricing-poster.jpg'
 import clawMachineImg from './assets/claw-machine.jpg'
 
 const MINT = '#00C896'
-const GOLD = '#FFD700'
-const DARK = '#050505'
+const GOLD = '#e6a800'
+const DARK = '#ffffff'
+const SURFACE_ALT = '#f8f9fa'
+const SURFACE_DEEP = '#f1f3f5'
 
 const GRID_BG = {
   backgroundImage:
-    'linear-gradient(rgba(0,200,150,0.035) 1px, transparent 1px), linear-gradient(to right, rgba(0,200,150,0.035) 1px, transparent 1px)',
+    'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px)',
   backgroundSize: '50px 50px',
 }
 
@@ -49,7 +51,7 @@ function BackToTop() {
           transition={{ duration: 0.25 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="fixed bottom-8 right-6 z-40 w-11 h-11 rounded-full flex items-center justify-center transition-colors"
-          style={{ background: 'rgba(10,10,10,0.9)', border: '1px solid rgba(255,255,255,0.1)' }}
+          style={{ background: 'rgba(255,255,255,0.95)', border: '1px solid #e0e0e0', boxShadow: '0 2px 12px rgba(0,0,0,0.1)' }}
           aria-label="Back to top"
         >
           <ChevronUp size={18} color={MINT} />
@@ -82,9 +84,10 @@ function Navbar() {
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? 'rgba(5,5,5,0.97)' : 'rgba(5,5,5,0.65)',
+        background: scrolled ? 'rgba(255,255,255,0.97)' : 'rgba(255,255,255,0.82)',
         backdropFilter: 'blur(20px)',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
+        borderBottom: scrolled ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(0,0,0,0.04)',
+        boxShadow: scrolled ? '0 2px 20px rgba(0,0,0,0.07)' : 'none',
       }}
     >
       <div className="max-w-7xl mx-auto pl-6 pr-4 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
@@ -112,7 +115,7 @@ function Navbar() {
             <a
               key={l.label}
               href={l.href}
-              className="text-[0.72rem] font-semibold text-gray-500 hover:text-white transition-colors uppercase tracking-[0.13em]"
+              className="text-[0.72rem] font-semibold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-[0.13em]"
             >
               {l.label}
             </a>
@@ -157,7 +160,7 @@ function Navbar() {
         </div>
 
         <button
-          className="lg:hidden text-gray-400 p-2 rounded-lg hover:bg-white/5 transition-colors"
+          className="lg:hidden text-gray-500 p-2 rounded-lg hover:bg-gray-100 transition-colors"
           style={{ justifySelf: 'end', gridColumn: '3' }}
           onClick={() => setMenuOpen(v => !v)}
           aria-label="Toggle menu"
@@ -174,7 +177,7 @@ function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22 }}
             className="lg:hidden overflow-hidden"
-            style={{ background: 'rgba(5,5,5,0.98)', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+            style={{ background: 'rgba(255,255,255,0.98)', borderTop: '1px solid #e8e8e8', boxShadow: '0 8px 20px rgba(0,0,0,0.07)' }}
           >
             <div className="px-6 py-5 flex flex-col gap-4">
               {links.map(l => (
@@ -182,7 +185,7 @@ function Navbar() {
                   key={l.label}
                   href={l.href}
                   onClick={() => setMenuOpen(false)}
-                  className="text-sm font-semibold text-gray-400 hover:text-white transition-colors uppercase tracking-wider"
+                  className="text-sm font-semibold text-gray-500 hover:text-gray-900 transition-colors uppercase tracking-wider"
                 >
                   {l.label}
                 </a>
@@ -238,11 +241,9 @@ function Hero() {
       style={{ background: DARK, paddingTop: '64px', ...GRID_BG }}
     >
       {/* ── Background depth layers ── */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 55% at 50% 55%, rgba(0,200,150,0.07) 0%, transparent 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ width: 560, height: 560, top: '-12%', left: '-8%', background: 'radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ width: 460, height: 460, bottom: '5%', right: '-6%', background: 'radial-gradient(circle, rgba(0,200,150,0.06) 0%, transparent 70%)' }} />
-      {/* vignette edges */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 55% at 50% 55%, rgba(0,200,150,0.05) 0%, transparent 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ width: 560, height: 560, top: '-12%', left: '-8%', background: 'radial-gradient(circle, rgba(200,160,0,0.04) 0%, transparent 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ width: 460, height: 460, bottom: '5%', right: '-6%', background: 'radial-gradient(circle, rgba(0,200,150,0.04) 0%, transparent 70%)' }} />
 
       {/* ── Main content ── */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-20 w-full py-8 sm:py-12 px-5 sm:px-8">
@@ -258,7 +259,7 @@ function Hero() {
               <span
                 key={b}
                 className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-                style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.38)', border: '1px solid rgba(255,255,255,0.07)' }}
+                style={{ background: '#f0f0f0', color: '#888888', border: '1px solid #e0e0e0' }}
               >
                 {b}
               </span>
@@ -280,7 +281,7 @@ function Hero() {
               textAlign: 'center',
               display: 'block',
               color: '#7ED957',
-              WebkitTextStroke: '1px rgba(255,255,255,0.72)',
+              WebkitTextStroke: '1px rgba(0,0,0,0.06)',
               marginBottom: '0.35em',
             }}
           >
@@ -292,7 +293,7 @@ function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.18, duration: 0.45 }}
-            className="font-black text-white uppercase tracking-wide mb-5 text-center"
+            className="font-black text-gray-900 uppercase tracking-wide mb-5 text-center"
             style={{ fontSize: 'clamp(1rem, 3.2vw, 2rem)', letterSpacing: '0.06em' }}
           >
             Dig In. Find Crazy Deals.
@@ -303,9 +304,9 @@ function Hero() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26, duration: 0.45 }}
-            className="text-gray-400 text-base sm:text-lg mb-5 max-w-md text-center leading-relaxed"
+            className="text-gray-500 text-base sm:text-lg mb-5 max-w-md text-center leading-relaxed"
           >
-            New, refurbished &amp; overstock items priced from <strong className="text-white">$2</strong>, right here in Liberty, MO.
+            New, refurbished &amp; overstock items priced from <strong className="text-gray-900">$2</strong>, right here in Liberty, MO.
           </motion.p>
 
           {/* Urgency callout */}
@@ -326,11 +327,11 @@ function Hero() {
                 maxWidth: '95%',
                 margin: '0 auto',
                 width: 'fit-content',
-                background: 'rgba(255,215,0,0.07)',
-                border: '1px solid rgba(255,215,0,0.2)',
+                background: 'rgba(200,160,0,0.07)',
+                border: '1px solid rgba(200,160,0,0.3)',
               }}
             >
-              <span style={{ color: GOLD, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase', textAlign: 'center' }}>
+              <span style={{ color: '#a07800', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase', textAlign: 'center' }}>
                 ⚡&nbsp; Prices from $2 &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
               </span>
             </div>
@@ -347,8 +348,8 @@ function Hero() {
               href="#products"
               className="flex items-center gap-2.5 font-black px-9 py-4 rounded-full text-base transition-opacity hover:opacity-90"
               style={{
-                background: 'linear-gradient(135deg, #7ED957 0%, #FFD700 100%)',
-                color: '#0a0a0a',
+                background: 'linear-gradient(135deg, #00C896 0%, #00a87a 100%)',
+                color: '#ffffff',
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
               }}
@@ -357,8 +358,8 @@ function Hero() {
             </a>
             <a
               href="tel:8162224238"
-              className="flex items-center gap-2.5 font-bold px-8 py-4 rounded-full text-white text-base transition-opacity hover:opacity-85"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.11)' }}
+              className="flex items-center gap-2.5 font-bold px-8 py-4 rounded-full text-gray-700 text-base transition-opacity hover:opacity-85"
+              style={{ background: '#f0f0f0', border: '1px solid #ddd' }}
             >
               <Phone size={17} color={MINT} strokeWidth={2.5} />
               (816) 222-4238
@@ -370,7 +371,7 @@ function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.52 }}
-            className="flex items-center justify-center gap-2 text-gray-600 text-sm"
+            className="flex items-center justify-center gap-2 text-gray-500 text-sm"
           >
             <Clock size={13} color={MINT} />
             Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
@@ -380,7 +381,7 @@ function Hero() {
       {/* ── Scrolling ticker ── */}
       <div
         className="relative z-20 overflow-hidden py-2.5"
-        style={{ background: 'rgba(0,200,150,0.055)', borderTop: '1px solid rgba(0,200,150,0.13)' }}
+        style={{ background: 'rgba(0,200,150,0.07)', borderTop: '1px solid rgba(0,200,150,0.2)' }}
       >
         <motion.div
           className="flex whitespace-nowrap"
@@ -420,7 +421,7 @@ function TreasureHunt() {
   ]
 
   return (
-    <section id="pricing" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
+    <section id="pricing" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -428,12 +429,12 @@ function TreasureHunt() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-white leading-tight mb-4"
+            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             TREASURE HUNT SAVINGS
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-gray-500 text-base max-w-lg mx-auto">
+          <motion.p variants={fadeUp} className="text-gray-500 text-base max-w-lg mx-auto leading-relaxed">
             Every item is color-tagged for easy pricing. No guessing, no haggling.
           </motion.p>
         </Reveal>
@@ -447,7 +448,7 @@ function TreasureHunt() {
                   key={label}
                   variants={fadeUp}
                   className="flex items-center gap-4 rounded-xl px-5 py-4"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                  style={{ background: '#ffffff', border: '1px solid #e8e8e8', boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
@@ -455,9 +456,9 @@ function TreasureHunt() {
                   >
                     <Tag size={18} color="white" strokeWidth={2} />
                   </div>
-                  <span className="flex-1 font-bold text-white text-base">{label}</span>
+                  <span className="flex-1 font-bold text-gray-900 text-base">{label}</span>
                   <span
-                    className="font-black text-2xl text-white"
+                    className="font-black text-2xl text-gray-900"
                     style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                   >
                     {price}
@@ -498,7 +499,7 @@ function ShelfDeals() {
   ]
 
   return (
-    <section id="shelf-deals" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
+    <section id="shelf-deals" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -506,12 +507,12 @@ function ShelfDeals() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5rem)] font-black text-white leading-tight mb-4"
+            className="text-[clamp(2.5rem,7vw,5rem)] font-black text-gray-900 leading-tight mb-4"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             MORE WAYS TO SAVE
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-gray-400 text-base max-w-2xl mx-auto leading-relaxed">
+          <motion.p variants={fadeUp} className="text-gray-500 text-base max-w-2xl mx-auto leading-relaxed">
             In addition to our bin pricing system, we also offer shelf items throughout the store. Each item is individually priced and typically 40-50% lower than Amazon prices, giving you even more ways to save on quality products.
           </motion.p>
         </Reveal>
@@ -523,16 +524,16 @@ function ShelfDeals() {
                 key={label}
                 variants={fadeUp}
                 className="rounded-xl p-6 text-center"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                style={{ background: '#ffffff', border: '1px solid #e8e8e8', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
               >
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 mx-auto"
-                  style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.12)' }}
+                  style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}
                 >
                   <Icon size={19} color={MINT} />
                 </div>
-                <h3 className="font-black text-white text-sm mb-2">{label}</h3>
-                <p className="text-gray-600 text-xs leading-relaxed">{desc}</p>
+                <h3 className="font-black text-gray-900 text-sm mb-2">{label}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -553,7 +554,7 @@ function ClawMachine() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2rem,5vw,4rem)] font-black text-white leading-tight"
+            className="text-[clamp(2rem,5vw,4rem)] font-black text-gray-900 leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             CLAW MACHINE
@@ -568,7 +569,7 @@ function ClawMachine() {
             <motion.div
               variants={fadeUp}
               className="rounded-2xl overflow-hidden"
-              style={{ border: '1px solid rgba(255,255,255,0.06)', background: '#0a0a0a' }}
+              style={{ border: '1px solid #e8e8e8', background: '#f5f5f5' }}
             >
               <img
                 src={clawMachineImg}
@@ -580,20 +581,20 @@ function ClawMachine() {
 
           <Reveal className="w-full lg:max-w-lg">
             <div className="flex flex-col gap-5">
-              <motion.p variants={fadeUp} className="text-gray-300 text-base leading-relaxed">
+              <motion.p variants={fadeUp} className="text-gray-600 text-base leading-relaxed">
                 We have an exciting claw machine right inside our store! Perfect for kids and adults alike. Try your luck and win amazing prizes!
               </motion.p>
 
               <motion.div
                 variants={fadeUp}
                 className="inline-flex items-center gap-3 rounded-xl px-5 py-3.5 self-start"
-                style={{ background: 'rgba(0,200,150,0.07)', border: '1px solid rgba(0,200,150,0.18)' }}
+                style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.25)' }}
               >
-                <span className="text-lg font-black text-white">🪙 $1 = 4 Tokens</span>
+                <span className="text-lg font-black text-gray-900">🪙 $1 = 4 Tokens</span>
                 <span className="text-sm font-semibold" style={{ color: MINT }}>Play &amp; Win!</span>
               </motion.div>
 
-              <motion.p variants={fadeUp} className="text-gray-400 text-sm leading-relaxed">
+              <motion.p variants={fadeUp} className="text-gray-500 text-sm leading-relaxed">
                 While you shop, let the kids play! Hours of fun waiting for you at Bins &amp; Deals.
               </motion.p>
 
@@ -623,7 +624,7 @@ function About() {
   ]
 
   return (
-    <section id="about" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
+    <section id="about" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -631,7 +632,7 @@ function About() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.8rem,6vw,5.5rem)] font-black text-white leading-tight"
+            className="text-[clamp(2.8rem,6vw,5.5rem)] font-black text-gray-900 leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             YOUR LOCAL DEAL DESTINATION
@@ -640,11 +641,11 @@ function About() {
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <Reveal>
-            <motion.p variants={fadeUp} className="text-gray-400 text-lg leading-relaxed mb-4">
-              At <strong className="text-white">Bins and Deals</strong>, we believe everyone deserves access to quality products without breaking the bank. Our store is packed with{' '}
-              <strong style={{ color: MINT }}>new, refurbished, and gently used items</strong> across every category, all priced far below retail.
+            <motion.p variants={fadeUp} className="text-gray-600 text-lg leading-relaxed mb-4">
+              At <strong className="text-gray-900">Bins and Deals</strong>, we believe everyone deserves access to quality products without breaking the bank. Our store is packed with{' '}
+              <strong style={{ color: '#009e78' }}>new, refurbished, and gently used items</strong> across every category, all priced far below retail.
             </motion.p>
-            <motion.p variants={fadeUp} className="text-gray-400 text-lg leading-relaxed mb-8">
+            <motion.p variants={fadeUp} className="text-gray-600 text-lg leading-relaxed mb-8">
               Whether you're hunting for electronics, home goods, clothing, or toys, you'll always find something worth grabbing at a price you won't believe. Deals change constantly, so every visit is a new adventure.
             </motion.p>
             <motion.a
@@ -664,7 +665,7 @@ function About() {
                   key={s.label}
                   variants={fadeUp}
                   className="rounded-2xl p-7 text-center"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                  style={{ background: '#ffffff', border: '1px solid #e8e8e8', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
                 >
                   <div
                     className="text-[clamp(2.2rem,5vw,3rem)] font-black leading-none mb-2"
@@ -678,7 +679,7 @@ function About() {
                   >
                     {s.display}
                   </div>
-                  <div className="text-gray-600 text-xs font-semibold uppercase tracking-wider">{s.label}</div>
+                  <div className="text-gray-500 text-xs font-semibold uppercase tracking-wider">{s.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -710,7 +711,7 @@ function Products() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(3rem,8vw,6.5rem)] font-black text-white leading-tight"
+            className="text-[clamp(3rem,8vw,6.5rem)] font-black text-gray-900 leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             SOMETHING FOR EVERYONE
@@ -727,16 +728,16 @@ function Products() {
                 key={label}
                 variants={fadeUp}
                 className="rounded-xl p-6"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                style={{ background: '#ffffff', border: '1px solid #e8e8e8', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
               >
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.12)' }}
+                  style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}
                 >
                   <Icon size={20} color={MINT} />
                 </div>
-                <h3 className="font-bold text-white text-sm mb-1.5 leading-tight">{label}</h3>
-                <p className="text-gray-600 text-xs leading-relaxed">{desc}</p>
+                <h3 className="font-bold text-gray-900 text-sm mb-1.5 leading-tight">{label}</h3>
+                <p className="text-gray-500 text-xs leading-relaxed">{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -749,7 +750,7 @@ function Products() {
             style={{ background: 'linear-gradient(135deg, #00C896 0%, #007A5A 100%)' }}
           >
             <div className="flex justify-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => <Star key={i} size={16} color={GOLD} fill={GOLD} />)}
+              {[...Array(5)].map((_, i) => <Star key={i} size={16} color="#FFD700" fill="#FFD700" />)}
             </div>
             <h3
               className="text-[clamp(2rem,5vw,4rem)] font-black text-white leading-none mb-3"
@@ -792,7 +793,7 @@ function FindUsOnline() {
   ]
 
   return (
-    <section id="connect" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
+    <section id="connect" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-14">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -800,7 +801,7 @@ function FindUsOnline() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-white leading-tight"
+            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-gray-900 leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             FIND US ONLINE
@@ -817,7 +818,7 @@ function FindUsOnline() {
                 key={label}
                 variants={fadeUp}
                 className="flex flex-col rounded-2xl p-8"
-                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
+                style={{ background: '#ffffff', border: '1px solid #e8e8e8', boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
               >
                 <div className="flex items-center gap-3 mb-5">
                   <div
@@ -830,7 +831,7 @@ function FindUsOnline() {
                   </div>
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#1877F2' }}>Facebook</span>
                 </div>
-                <h3 className="text-white font-black text-lg mb-2 leading-tight">{label}</h3>
+                <h3 className="text-gray-900 font-black text-lg mb-2 leading-tight">{label}</h3>
                 <p className="text-gray-500 text-sm leading-relaxed mb-6 flex-1">{sub}</p>
                 <a
                   href={href}
@@ -883,7 +884,7 @@ function Location() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-white leading-tight"
+            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-gray-900 leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             VISIT OUR STORE
@@ -898,18 +899,18 @@ function Location() {
                   key={i}
                   variants={fadeUp}
                   className="flex gap-4 rounded-xl p-5"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                  style={{ background: '#ffffff', border: '1px solid #e8e8e8', boxShadow: '0 1px 8px rgba(0,0,0,0.05)' }}
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.14)' }}
+                    style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.2)' }}
                   >
                     <Icon size={17} color={MINT} />
                   </div>
                   <div>
-                    <p className="text-white font-bold text-base leading-tight mb-0.5">{title}</p>
+                    <p className="text-gray-900 font-bold text-base leading-tight mb-0.5">{title}</p>
                     <p className="text-gray-500 text-sm">{sub}</p>
-                    {detail && <p className="text-gray-700 text-xs mt-0.5">{detail}</p>}
+                    {detail && <p className="text-gray-500 text-xs mt-0.5">{detail}</p>}
                     {link && (
                       <a
                         href={link.href}
@@ -939,7 +940,7 @@ function Location() {
             <motion.div
               variants={fadeUp}
               className="rounded-2xl overflow-hidden"
-              style={{ height: '460px', border: '1px solid rgba(255,255,255,0.06)' }}
+              style={{ height: '460px', border: '1px solid #e8e8e8', boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}
             >
               <iframe
                 title="Bins and Deals Location"
@@ -973,7 +974,7 @@ function Hours() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 
   return (
-    <section id="hours" className="py-24 relative" style={{ background: '#080d08', ...GRID_BG }}>
+    <section id="hours" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-2xl mx-auto px-5 sm:px-8">
         <Reveal className="text-center mb-12">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -981,7 +982,7 @@ function Hours() {
           </motion.p>
           <motion.h2
             variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-white leading-tight"
+            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black text-gray-900 leading-tight"
             style={{ fontFamily: "'Bebas Neue', sans-serif" }}
           >
             COME SEE US
@@ -995,7 +996,7 @@ function Hours() {
           <motion.div
             variants={fadeUp}
             className="rounded-2xl overflow-hidden"
-            style={{ border: '1px solid rgba(255,255,255,0.07)' }}
+            style={{ border: '1px solid #e8e8e8', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', overflow: 'hidden', borderRadius: '1rem' }}
           >
             <div className="px-6 py-4" style={{ background: `linear-gradient(135deg, ${MINT} 0%, #007A5A 100%)` }}>
               <div className="flex items-center gap-3">
@@ -1003,14 +1004,14 @@ function Hours() {
                 <span className="text-white font-black text-sm uppercase tracking-widest">Weekly Schedule</span>
               </div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.02)' }} className="divide-y divide-white/5">
+            <div style={{ background: '#ffffff' }} className="divide-y divide-gray-100">
               {days.map(({ day, hours }) => {
                 const isToday = day === today
                 return (
                   <div
                     key={day}
                     className="flex items-center justify-between px-6 py-3.5"
-                    style={isToday ? { background: 'rgba(0,200,150,0.05)' } : {}}
+                    style={isToday ? { background: 'rgba(0,200,150,0.06)' } : {}}
                   >
                     <div className="flex items-center gap-3">
                       {isToday && (
@@ -1021,9 +1022,9 @@ function Hours() {
                           Today
                         </span>
                       )}
-                      <span className={`font-semibold text-sm ${isToday ? 'text-white' : 'text-gray-400'}`}>{day}</span>
+                      <span className={`font-semibold text-sm ${isToday ? 'text-gray-900' : 'text-gray-600'}`}>{day}</span>
                     </div>
-                    <span className={`font-semibold text-sm tabular-nums ${isToday ? 'text-white' : 'text-gray-600'}`}>
+                    <span className={`font-semibold text-sm tabular-nums ${isToday ? 'text-gray-900' : 'text-gray-500'}`}>
                       {hours}
                     </span>
                   </div>
@@ -1032,9 +1033,9 @@ function Hours() {
             </div>
             <div
               className="px-6 py-3.5 flex items-center justify-between"
-              style={{ background: 'rgba(0,0,0,0.2)', borderTop: '1px solid rgba(255,255,255,0.04)' }}
+              style={{ background: '#f8f8f8', borderTop: '1px solid #e8e8e8' }}
             >
-              <p className="text-gray-700 text-xs">Holiday hours may vary</p>
+              <p className="text-gray-500 text-xs">Holiday hours may vary</p>
               <a href="tel:8162224238" className="flex items-center gap-1.5 text-xs font-bold hover:underline" style={{ color: MINT }}>
                 <Phone size={11} strokeWidth={2.5} /> Call to confirm
               </a>
@@ -1053,7 +1054,7 @@ function PaymentMethods() {
     { icon: <CreditCard size={20} color={MINT} />, label: 'Credit & Debit' },
     {
       icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#111111">
           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
         </svg>
       ),
@@ -1062,16 +1063,16 @@ function PaymentMethods() {
   ]
 
   return (
-    <div className="py-8 px-5 sm:px-8" style={{ background: '#020408', borderTop: '1px solid rgba(255,255,255,0.04)', ...GRID_BG }}>
+    <div className="py-8 px-5 sm:px-8" style={{ background: SURFACE_DEEP, borderTop: '1px solid #e5e5e5', ...GRID_BG }}>
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-        <p className="text-gray-700 text-xs font-bold uppercase tracking-widest shrink-0">We Accept</p>
-        <div className="w-px h-4 bg-white/10 hidden sm:block" />
+        <p className="text-gray-500 text-xs font-bold uppercase tracking-widest shrink-0">We Accept</p>
+        <div className="w-px h-4 bg-gray-300 hidden sm:block" />
         <div className="flex items-center gap-8 flex-wrap justify-center">
           {methods.map(({ icon, label }) => (
             <div key={label} className="flex items-center gap-2.5">
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}
+                style={{ background: '#ffffff', border: '1px solid #e5e5e5' }}
               >
                 {icon}
               </div>
@@ -1089,12 +1090,12 @@ function Footer() {
   return (
     <footer
       className="py-14 px-5 sm:px-8"
-      style={{ background: '#020408', borderTop: '1px solid rgba(255,255,255,0.05)', ...GRID_BG }}
+      style={{ background: SURFACE_DEEP, borderTop: '1px solid #e5e5e5', ...GRID_BG }}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="grid sm:grid-cols-3 gap-10 pb-10" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="grid sm:grid-cols-3 gap-10 pb-10" style={{ borderBottom: '1px solid #e5e5e5' }}>
           <div>
-            <h3 className="text-xl font-black text-white mb-3" style={{ fontFamily: "'Poppins', sans-serif" }}>
+            <h3 className="text-xl font-black text-gray-900 mb-3" style={{ fontFamily: "'Poppins', sans-serif" }}>
               BINS & DEALS
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed">
@@ -1102,20 +1103,20 @@ function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-600 mb-4">Store Hours</h4>
+            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Store Hours</h4>
             <div className="space-y-2 text-sm">
-              <p className="text-gray-600"><span className="text-gray-300 font-semibold">Mon-Sat:</span> 10:00 AM - 8:00 PM</p>
-              <p className="text-gray-600"><span className="text-gray-300 font-semibold">Sunday:</span> 11:00 AM - 7:00 PM</p>
+              <p className="text-gray-500"><span className="text-gray-800 font-semibold">Mon-Sat:</span> 10:00 AM - 8:00 PM</p>
+              <p className="text-gray-500"><span className="text-gray-800 font-semibold">Sunday:</span> 11:00 AM - 7:00 PM</p>
             </div>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-600 mb-4">Contact & Location</h4>
-            <div className="space-y-3 text-sm text-gray-600">
+            <h4 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4">Contact & Location</h4>
+            <div className="space-y-3 text-sm text-gray-500">
               <p className="flex items-start gap-2.5">
                 <MapPin size={14} color={MINT} className="mt-0.5 shrink-0" />
                 892 Rte 291, Liberty, MO 64068
               </p>
-              <a href="tel:8162224238" className="flex items-center gap-2.5 hover:text-gray-300 transition-colors">
+              <a href="tel:8162224238" className="flex items-center gap-2.5 hover:text-gray-700 transition-colors">
                 <Phone size={14} color={MINT} className="shrink-0" />
                 (816) 222-4238
               </a>
@@ -1124,7 +1125,7 @@ function Footer() {
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-gray-700 text-xs">© {new Date().getFullYear()} Bins and Deals. All rights reserved.</p>
+          <p className="text-gray-500 text-xs">© {new Date().getFullYear()} Bins and Deals. All rights reserved.</p>
           <a
             href="tel:8162224238"
             className="flex items-center gap-2 font-bold px-5 py-2.5 rounded-full text-white text-xs transition-opacity hover:opacity-85"
@@ -1141,7 +1142,7 @@ function Footer() {
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
-    <div className="min-h-screen" style={{ background: DARK, ...GRID_BG }}>
+    <div className="min-h-screen" style={{ background: '#ffffff', ...GRID_BG }}>
       <BackToTop />
       <Navbar />
       <Hero />
