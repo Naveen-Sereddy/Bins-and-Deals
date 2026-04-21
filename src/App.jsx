@@ -275,11 +275,12 @@ function Hero() {
             style={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 900,
-              fontSize: 'clamp(3rem, 12vw, 8.5rem)',
+              fontSize: 'clamp(1.8rem, 9vw, 8rem)',
               lineHeight: 0.88,
               letterSpacing: '0.03em',
               textTransform: 'uppercase',
               textAlign: 'center',
+              whiteSpace: 'nowrap',
               width: '100%',
               color: '#7ED957',
               WebkitTextStroke: '1px rgba(255,255,255,0.72)',
@@ -307,7 +308,7 @@ function Hero() {
             transition={{ delay: 0.26, duration: 0.45 }}
             className="text-gray-400 text-base sm:text-lg mb-5 max-w-md mx-auto leading-relaxed"
           >
-            New, refurbished &amp; overstock items priced from <strong className="text-white">$2</strong> — right here in Liberty, MO.
+            New, refurbished &amp; overstock items priced from <strong className="text-white">$2</strong>, right here in Liberty, MO.
           </motion.p>
 
           {/* Urgency callout */}
