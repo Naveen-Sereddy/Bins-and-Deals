@@ -87,12 +87,7 @@ function Navbar() {
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
       }}
     >
-<<<<<<< HEAD
       <div className="max-w-7xl mx-auto pl-6 pr-4 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
-=======
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr',
-              transform: 'translateX(-20px)', alignItems: 'center' }}>
->>>>>>> 7b6e21af938b31e7a6ab1fc8150bd10c21b54dc9
         {/* Logo */}
         <div style={{ justifySelf: 'start' }}>
           <a
