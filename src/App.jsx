@@ -219,98 +219,216 @@ function Navbar() {
 }
 
 // ─── HERO ────────────────────────────────────────────────────────────────────
+const FLOATERS = [
+  { emoji: '🎧', price: '$3', top: '22%', left:  '4%',  delay: 0,   dur: 5.5, rot:  5 },
+  { emoji: '👟', price: '$5', top: '18%', right: '5%',  delay: 0.9, dur: 6.2, rot: -4 },
+  { emoji: '📱', price: '$7', top: '60%', left:  '3%',  delay: 1.4, dur: 4.9, rot:  3 },
+  { emoji: '🍳', price: '$2', top: '58%', right: '4%',  delay: 0.5, dur: 5.7, rot: -5 },
+  { emoji: '🎮', price: '$5', top: '40%', left:  '11%', delay: 1.8, dur: 4.6, rot:  4 },
+]
+
+const BADGES = ['New stock every week', 'Thousands of items', 'In-store treasure hunt']
+
+const TICKER_TEXT = '\u00a0\u00a0New inventory weekly\u00a0\u00a0·\u00a0\u00a0Limited time deals\u00a0\u00a0·\u00a0\u00a0First come, first served\u00a0\u00a0·\u00a0\u00a0Prices from $2\u00a0\u00a0·\u00a0\u00a0In-store only\u00a0\u00a0·\u00a0\u00a0'
+
 function Hero() {
   return (
     <section
       id="hero"
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
-      style={{ background: DARK, paddingTop: '80px' }}
+      className="min-h-screen flex flex-col relative overflow-hidden"
+      style={{ background: DARK, paddingTop: '64px' }}
     >
+      {/* ── Background depth layers ── */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% 45%, rgba(0,200,150,0.06) 0%, transparent 65%)' }}
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(0,200,150,0.022) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,150,0.022) 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+        }}
       />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 55% at 50% 55%, rgba(0,200,150,0.07) 0%, transparent 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ width: 560, height: 560, top: '-12%', left: '-8%', background: 'radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ width: 460, height: 460, bottom: '5%', right: '-6%', background: 'radial-gradient(circle, rgba(0,200,150,0.06) 0%, transparent 70%)' }} />
+      {/* vignette edges */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.55) 100%)' }} />
 
-      <div className="max-w-4xl mx-auto px-5 sm:px-8 text-center relative z-10">
+      {/* ── Floating product bubbles (hidden on small screens) ── */}
+      {FLOATERS.map(({ emoji, price, top, left, right, delay, dur, rot }, i) => (
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45 }}
+          key={i}
+          className="absolute pointer-events-none z-10 hidden sm:block"
+          style={{ top, left, right }}
+          animate={{ y: [0, -13, 0], rotate: [0, rot, 0] }}
+          transition={{ duration: dur, repeat: Infinity, delay, ease: 'easeInOut' }}
         >
-          <div
-            className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-xs font-bold uppercase tracking-widest"
-            style={{ background: 'rgba(0,200,150,0.08)', border: '1px solid rgba(0,200,150,0.18)', color: MINT }}
-          >
-            Missouri's Best Deals
+          <div className="flex flex-col items-center gap-1">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center text-[1.6rem]"
+              style={{
+                background: 'rgba(12,12,12,0.88)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 6px 24px rgba(0,0,0,0.55)',
+              }}
+            >
+              {emoji}
+            </div>
+            <span
+              className="text-[10px] font-black px-2.5 py-0.5 rounded-full text-black"
+              style={{ background: MINT }}
+            >
+              {price}
+            </span>
           </div>
         </motion.div>
+      ))}
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          style={{
-            fontFamily: "'Poppins', sans-serif",
-            fontWeight: 900,
-            fontSize: 'clamp(2.8rem, 10vw, 8rem)',
-            lineHeight: 0.92,
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            whiteSpace: 'nowrap',
-            color: '#7ED957',
-            WebkitTextStroke: '1px rgba(255,255,255,0.75)',
-            marginBottom: '1.5rem',
-          }}
-        >
-          BINS &amp; DEALS
-        </motion.h1>
+      {/* ── Main content ── */}
+      <div className="flex-1 flex items-center justify-center relative z-20">
+        <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center py-14">
 
-        <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.45 }}
-          className="text-gray-400 text-lg sm:text-xl mb-10 max-w-md mx-auto leading-relaxed"
-        >
-          New, refurbished &amp; used products at unbeatable prices, right here in Liberty, MO.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.45 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <a
-            href="#products"
-            className="flex items-center gap-2 font-bold px-8 py-4 rounded-full text-white text-base transition-opacity hover:opacity-85"
-            style={{ background: 'linear-gradient(135deg, #00C896 0%, #FFD700 100%)' }}
+          {/* Trust badge pills */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex flex-wrap items-center justify-center gap-2 mb-7"
           >
-            Shop Now <ArrowRight size={18} strokeWidth={2.5} />
-          </a>
-          <a
-            href="tel:8162224238"
-            className="flex items-center gap-2 font-bold px-8 py-4 rounded-full text-white text-base transition-opacity hover:opacity-85"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-          >
-            <Phone size={17} color={MINT} strokeWidth={2.5} />
-            (816) 222-4238
-          </a>
-        </motion.div>
+            {BADGES.map(b => (
+              <span
+                key={b}
+                className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.38)', border: '1px solid rgba(255,255,255,0.07)' }}
+              >
+                {b}
+              </span>
+            ))}
+          </motion.div>
 
+          {/* Store name */}
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08, duration: 0.55 }}
+            style={{
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 900,
+              fontSize: 'clamp(3rem, 12vw, 8.5rem)',
+              lineHeight: 0.88,
+              letterSpacing: '0.03em',
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
+              color: '#7ED957',
+              WebkitTextStroke: '1px rgba(255,255,255,0.72)',
+              marginBottom: '0.25em',
+            }}
+          >
+            BINS &amp; DEALS
+          </motion.h1>
+
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.18, duration: 0.45 }}
+            className="font-black text-white uppercase tracking-wide mb-5"
+            style={{ fontSize: 'clamp(1rem, 3.2vw, 2rem)', letterSpacing: '0.06em' }}
+          >
+            Dig In. Find Crazy Deals.
+          </motion.p>
+
+          {/* Sub-description */}
+          <motion.p
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.26, duration: 0.45 }}
+            className="text-gray-400 text-base sm:text-lg mb-5 max-w-md mx-auto leading-relaxed"
+          >
+            New, refurbished &amp; overstock items priced from <strong className="text-white">$2</strong> — right here in Liberty, MO.
+          </motion.p>
+
+          {/* Urgency callout */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.93 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.33, duration: 0.4 }}
+            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
+            style={{ background: 'rgba(255,215,0,0.07)', border: '1px solid rgba(255,215,0,0.2)' }}
+          >
+            <span style={{ color: GOLD, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase' }}>
+              ⚡&nbsp; Prices from $2 &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
+            </span>
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.45 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
+          >
+            <a
+              href="#products"
+              className="flex items-center gap-2.5 font-black px-9 py-4 rounded-full text-base transition-opacity hover:opacity-90"
+              style={{
+                background: 'linear-gradient(135deg, #7ED957 0%, #FFD700 100%)',
+                color: '#0a0a0a',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Start Digging <ArrowRight size={18} strokeWidth={2.8} />
+            </a>
+            <a
+              href="tel:8162224238"
+              className="flex items-center gap-2.5 font-bold px-8 py-4 rounded-full text-white text-base transition-opacity hover:opacity-85"
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.11)' }}
+            >
+              <Phone size={17} color={MINT} strokeWidth={2.5} />
+              (816) 222-4238
+            </a>
+          </motion.div>
+
+          {/* Hours */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.52 }}
+            className="flex items-center justify-center gap-2 text-gray-600 text-sm"
+          >
+            <Clock size={13} color={MINT} />
+            Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ── Scrolling ticker ── */}
+      <div
+        className="relative z-20 overflow-hidden py-2.5"
+        style={{ background: 'rgba(0,200,150,0.055)', borderTop: '1px solid rgba(0,200,150,0.13)' }}
+      >
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-10 flex items-center justify-center gap-2 text-gray-600 text-sm"
+          className="flex whitespace-nowrap"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
         >
-          <Clock size={13} color={MINT} />
-          Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
+          {[...Array(4)].map((_, i) => (
+            <span
+              key={i}
+              className="text-[11px] font-bold uppercase tracking-[0.1em]"
+              style={{ color: MINT }}
+            >
+              {TICKER_TEXT}
+            </span>
+          ))}
         </motion.div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+      {/* Scroll caret */}
+      <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-20">
         <motion.div animate={{ y: [0, 7, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}>
-          <ChevronDown size={24} color="rgba(0,200,150,0.3)" />
+          <ChevronDown size={22} color="rgba(0,200,150,0.28)" />
         </motion.div>
       </div>
     </section>
