@@ -87,7 +87,12 @@ function Navbar() {
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
       }}
     >
+<<<<<<< HEAD
       <div className="max-w-7xl mx-auto pl-6 pr-4 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
+=======
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr',
+              transform: 'translateX(-20px)', alignItems: 'center' }}>
+>>>>>>> 7b6e21af938b31e7a6ab1fc8150bd10c21b54dc9
         {/* Logo */}
         <div style={{ justifySelf: 'start' }}>
           <a
@@ -278,10 +283,7 @@ function Hero() {
               letterSpacing: '0.03em',
               textTransform: 'uppercase',
               textAlign: 'center',
-              whiteSpace: 'nowrap',
               display: 'block',
-              width: '100vw',
-              marginLeft: 'calc(-50vw + 50%)',
               color: '#7ED957',
               WebkitTextStroke: '1px rgba(255,255,255,0.72)',
               marginBottom: '0.35em',
@@ -325,10 +327,10 @@ function Hero() {
                 justifyContent: 'center',
                 alignItems: 'center',
                 textAlign: 'center',
-                padding: '10px 20px',
-                maxWidth: '90%',
-                marginLeft: 'auto',
-                marginRight: 'auto',
+                padding: '12px 18px',
+                maxWidth: '95%',
+                margin: '0 auto',
+                width: 'fit-content',
                 background: 'rgba(255,215,0,0.07)',
                 border: '1px solid rgba(255,215,0,0.2)',
               }}
