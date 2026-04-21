@@ -87,9 +87,9 @@ function Navbar() {
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
       }}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
         {/* Logo */}
-        <div className="shrink-0">
+        <div style={{ justifySelf: 'start' }}>
           <a
             href="#hero"
             style={{
@@ -107,7 +107,7 @@ function Navbar() {
         </div>
 
         {/* Nav links — centered */}
-        <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
+        <div className="hidden lg:flex items-center gap-8" style={{ justifySelf: 'center' }}>
           {links.map(l => (
             <a
               key={l.label}
@@ -120,7 +120,7 @@ function Navbar() {
         </div>
 
         {/* Right action buttons */}
-        <div className="hidden lg:flex items-center gap-2 shrink-0">
+        <div className="hidden lg:flex items-center gap-2" style={{ justifySelf: 'end' }}>
           <a
             href="https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr"
             target="_blank"
@@ -158,6 +158,7 @@ function Navbar() {
 
         <button
           className="lg:hidden text-gray-400 p-2 rounded-lg hover:bg-white/5 transition-colors"
+          style={{ justifySelf: 'end', gridColumn: '3' }}
           onClick={() => setMenuOpen(v => !v)}
           aria-label="Toggle menu"
         >
@@ -315,12 +316,27 @@ function Hero() {
             initial={{ opacity: 0, scale: 0.93 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.33, duration: 0.4 }}
-            className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
-            style={{ background: 'rgba(255,215,0,0.07)', border: '1px solid rgba(255,215,0,0.2)' }}
+            className="mb-8 flex justify-center w-full"
           >
-            <span style={{ color: GOLD, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase' }}>
-              ⚡&nbsp; Prices from $2 &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
-            </span>
+            <div
+              className="rounded-full"
+              style={{
+                display: 'inline-flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                padding: '10px 20px',
+                maxWidth: '90%',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                background: 'rgba(255,215,0,0.07)',
+                border: '1px solid rgba(255,215,0,0.2)',
+              }}
+            >
+              <span style={{ color: GOLD, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase', textAlign: 'center' }}>
+                ⚡&nbsp; Prices from $2 &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
+              </span>
+            </div>
           </motion.div>
 
           {/* CTAs */}
