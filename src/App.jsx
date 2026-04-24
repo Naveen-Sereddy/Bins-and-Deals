@@ -16,7 +16,7 @@ const SURFACE_DEEP = '#f1f3f5'
 
 const GRID_BG = {
   backgroundImage:
-    'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px)',
+    'linear-gradient(rgba(0,0,0,0.015) 1px, transparent 1px), linear-gradient(to right, rgba(0,0,0,0.015) 1px, transparent 1px)',
   backgroundSize: '50px 50px',
 }
 
