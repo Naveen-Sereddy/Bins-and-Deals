@@ -432,9 +432,9 @@ function TreasureHunt() {
   ]
 
   return (
-    <section id="pricing" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="pricing" className="py-14 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Pricing System
           </motion.p>
@@ -509,9 +509,9 @@ function ShelfDeals() {
   ]
 
   return (
-    <section id="shelf-deals" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="shelf-deals" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Shelf Deals
           </motion.p>
@@ -556,9 +556,9 @@ function ShelfDeals() {
 // ─── CLAW MACHINE ────────────────────────────────────────────────────────────
 function ClawMachine() {
   return (
-    <section id="claw-machine" className="py-16 relative min-h-[80vh] flex items-center" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="claw-machine" className="py-10 relative flex items-center" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8 w-full">
-        <Reveal className="text-center mb-10">
+        <Reveal className="text-center mb-6">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             In-Store Fun
           </motion.p>
@@ -634,9 +634,9 @@ function About() {
   ]
 
   return (
-    <section id="about" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="about" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             About Us
           </motion.p>
@@ -649,7 +649,7 @@ function About() {
           </motion.h2>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
           <Reveal>
             <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-4" style={{ color: '#9ca3af' }}>
               At <strong style={{ color: '#ffffff' }}>Bins and Deals</strong>, we believe everyone deserves access to quality products without breaking the bank. Our store is packed with{' '}
@@ -713,9 +713,9 @@ function Products() {
   ]
 
   return (
-    <section id="products" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="products" className="py-14 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             What We Sell
           </motion.p>
@@ -793,19 +793,31 @@ function FindUsOnline() {
       sub: 'Stay updated with our latest arrivals, store news, and exclusive deals. Join our community!',
       btnText: 'Visit Our Facebook Page',
       href: 'https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr',
+      badgeLabel: 'Facebook',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+          <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+        </svg>
+      ),
     },
     {
       label: 'Shop on Facebook Marketplace',
       sub: 'Browse our product listings at prices cheaper than Amazon. New items added regularly!',
       btnText: 'Browse Our Listings',
       href: 'https://www.facebook.com/share/1Ao34Qrcpi/?mibextid=wwXIfr',
+      badgeLabel: 'Marketplace',
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+          <path d="M21 3H3a1 1 0 0 0-1 1v2.5a2.5 2.5 0 0 0 2 2.45V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8.95A2.5 2.5 0 0 0 22 6.5V4a1 1 0 0 0-1-1zm-9 15H9v-5h3v5zm4 0h-3v-5h3v5zm2-8H6V8.95A2.5 2.5 0 0 0 8.5 9h7A2.5 2.5 0 0 0 18 8.95V10zM4 6.5V5h16v1.5a1.5 1.5 0 0 1-3 0 1 1 0 0 0-2 0 1.5 1.5 0 0 1-3 0 1 1 0 0 0-2 0 1.5 1.5 0 0 1-3 0z"/>
+        </svg>
+      ),
     },
   ]
 
   return (
-    <section id="connect" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="connect" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Connect With Us
           </motion.p>
@@ -823,7 +835,7 @@ function FindUsOnline() {
 
         <Reveal>
           <div className="grid sm:grid-cols-2 gap-6">
-            {cards.map(({ label, sub, btnText, href }) => (
+            {cards.map(({ label, sub, btnText, href, icon, badgeLabel }) => (
               <motion.div
                 key={label}
                 variants={fadeUp}
@@ -835,11 +847,9 @@ function FindUsOnline() {
                     className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                     style={{ background: '#1877F2' }}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
-                    </svg>
+                    {icon}
                   </div>
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#1877F2' }}>Facebook</span>
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#1877F2' }}>{badgeLabel}</span>
                 </div>
                 <h3 className="font-black text-lg mb-2 leading-tight" style={{ color: '#ffffff' }}>{label}</h3>
                 <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: '#8b8f9a' }}>{sub}</p>
@@ -886,9 +896,9 @@ function Location() {
   ]
 
   return (
-    <section id="location" className="py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="location" className="py-14 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-14">
+        <Reveal className="text-center mb-8">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Find Us
           </motion.p>
@@ -901,7 +911,7 @@ function Location() {
           </motion.h2>
         </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
           <Reveal>
             <div className="flex flex-col gap-4">
               {info.map(({ icon: Icon, title, sub, detail, link }, i) => (
@@ -984,9 +994,9 @@ function Hours() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 
   return (
-    <section id="hours" className="py-24 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="hours" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-2xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-12">
+        <Reveal className="text-center mb-7">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Store Hours
           </motion.p>
@@ -1102,7 +1112,7 @@ function PaymentMethods() {
 function Footer() {
   return (
     <footer
-      className="py-14 px-5 sm:px-8"
+      className="py-8 px-5 sm:px-8"
       style={{ background: SURFACE_DEEP, borderTop: `1px solid ${CARD_BORDER}`, ...GRID_BG }}
     >
       <div className="max-w-7xl mx-auto">
@@ -1138,7 +1148,7 @@ function Footer() {
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs" style={{ color: '#4b5563' }}>© {new Date().getFullYear()} Bins and Deals. All rights reserved.</p>
+          <p className="text-xs" style={{ color: '#4b5563' }}>© {new Date().getFullYear()} Bins & Deals. All rights reserved.</p>
           <a
             href="tel:8162224238"
             className="flex items-center gap-2 font-bold px-5 py-2.5 rounded-xl text-white text-xs transition-opacity hover:opacity-85"
