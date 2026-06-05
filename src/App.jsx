@@ -8,23 +8,35 @@ import {
 import pricingPoster from './assets/pricing-poster.jpg'
 import clawMachineImg from './assets/claw-machine.jpg'
 
-const MINT = '#00C896'
-const GOLD = '#e6a800'
-const DARK = '#111318'
-const SURFACE_ALT = '#161922'
-const SURFACE_DEEP = '#0e1015'
+const MINT = '#00E08A'
+const MINT_DEEP = '#00b873'
+const GOLD = '#FFB627'
+const DARK = '#08090c'
+const SURFACE_ALT = '#0d0f13'
+const SURFACE_DEEP = '#060709'
 
-const CARD_BG = '#1c2030'
-const CARD_BORDER = 'rgba(255,255,255,0.07)'
+const CARD_BG = '#15171f'
+const CARD_BORDER = 'rgba(255,255,255,0.08)'
+
+// Reusable premium accents.
+const MINT_GRAD = `linear-gradient(135deg, ${MINT} 0%, ${MINT_DEEP} 100%)`
+const MINT_GLOW = '0 10px 30px -8px rgba(0,224,138,0.5)'
+// Layered depth + lit-from-above highlight — used across all cards for a consistent premium surface.
+const CARD_SHADOW = 'inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 2px rgba(0,0,0,0.5), 0 18px 44px -16px rgba(0,0,0,0.65)'
+const CARD_SHADOW_HOVER = 'inset 0 1px 0 rgba(255,255,255,0.07), 0 1px 2px rgba(0,0,0,0.5), 0 26px 50px -14px rgba(0,0,0,0.7), 0 0 34px -8px rgba(0,224,138,0.28)'
+// Shared lift-on-hover for grid cards.
+const CARD_HOVER = { y: -4, boxShadow: CARD_SHADOW_HOVER }
 
 const GRID_BG = {
   backgroundImage:
-    'linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,0.028) 1px, transparent 1px)',
-  backgroundSize: '50px 50px',
+    'linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,0.022) 1px, transparent 1px)',
+  backgroundSize: '56px 56px',
 }
 
-const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45 } } }
-const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.07 } } }
+// Premium easing — soft, decisive settle (cubic-bezier "ease-out-quint").
+const EASE = [0.22, 1, 0.36, 1]
+const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } } }
+const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }
 
 function Reveal({ children, className = '' }) {
   const ref = useRef(null)
@@ -54,7 +66,7 @@ function BackToTop() {
           transition={{ duration: 0.25 }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="fixed bottom-8 right-6 z-40 w-11 h-11 rounded-full flex items-center justify-center transition-colors"
-          style={{ background: 'rgba(30,32,40,0.95)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
+          style={{ background: 'rgba(21,23,31,0.92)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px -6px rgba(0,0,0,0.6)' }}
           aria-label="Back to top"
         >
           <ChevronUp size={18} color={MINT} />
@@ -83,14 +95,51 @@ function Navbar() {
     { label: 'Hours',        href: '#hours' },
   ]
 
+  // Icon-only social button — recognizable glyph, glass surface, tooltip + aria-label for clarity.
+  const IconBtn = ({ href, label, children }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={label}
+      aria-label={label}
+      className="flex items-center justify-center rounded-xl transition-all duration-200"
+      style={{ width: 40, height: 40, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.borderColor = 'rgba(0,224,138,0.5)'; e.currentTarget.style.background = 'rgba(0,224,138,0.08)' }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
+    >
+      {children}
+    </a>
+  )
+  const fbIcon = (
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="#4a9bff">
+      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+    </svg>
+  )
+  const mpIcon = (
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="#4a9bff" fillRule="evenodd" clipRule="evenodd">
+      {/* Scalloped storefront awning */}
+      <path d="M3 4h18v3q-2.25 1.4 -4.5 0q-2.25 1.4 -4.5 0q-2.25 1.4 -4.5 0q-2.25 1.4 -4.5 0z"/>
+      {/* Storefront body with open doorway */}
+      <path d="M5 8.5h14V19a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8.5zM10 20v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h-4z"/>
+    </svg>
+  )
+  const socialBtns = (
+    <>
+      <IconBtn href="https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr" label="Facebook Page">{fbIcon}</IconBtn>
+      <IconBtn href="https://www.facebook.com/share/1Ao34Qrcpi/?mibextid=wwXIfr" label="Facebook Marketplace">{mpIcon}</IconBtn>
+    </>
+  )
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? 'rgba(17,19,24,0.97)' : 'rgba(17,19,24,0.88)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(255,255,255,0.03)',
-        boxShadow: scrolled ? '0 2px 20px rgba(0,0,0,0.3)' : 'none',
+        background: scrolled ? 'rgba(14,16,22,0.85)' : 'rgba(14,16,22,0.55)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(255,255,255,0.03)',
+        boxShadow: scrolled ? '0 8px 32px -8px rgba(0,0,0,0.6)' : 'none',
       }}
     >
       <div className="max-w-7xl mx-auto pl-6 pr-4 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
@@ -102,7 +151,7 @@ function Navbar() {
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 900,
               fontSize: 'clamp(1.1rem, 2.5vw, 1.35rem)',
-              color: '#7ED957',
+              color: '#00E08A',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',
               lineHeight: 1,
@@ -119,62 +168,41 @@ function Navbar() {
               key={l.label}
               href={l.href}
               className="text-[0.72rem] font-semibold uppercase tracking-[0.13em] transition-colors"
-              style={{ color: '#9ca3af' }}
+              style={{ color: '#9aa0ac' }}
               onMouseEnter={e => e.target.style.color = '#ffffff'}
-              onMouseLeave={e => e.target.style.color = '#9ca3af'}
+              onMouseLeave={e => e.target.style.color = '#9aa0ac'}
             >
               {l.label}
             </a>
           ))}
         </div>
 
-        {/* Right action buttons */}
-        <div className="hidden lg:flex items-center gap-2" style={{ justifySelf: 'end' }}>
-          <a
-            href="https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-85"
-            style={{ background: '#1877F2' }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
-              <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
-            </svg>
-            Facebook
-          </a>
-          <a
-            href="https://www.facebook.com/share/1Ao34Qrcpi/?mibextid=wwXIfr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-85"
-            style={{ background: '#1877F2' }}
-          >
-            <svg width="13" height="13" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 7C11.029 7 7 11.029 7 16v1h18v-1c0-4.971-4.029-9-9-9z" fill="white"/>
-              <rect x="7" y="18.5" width="8" height="6.5" rx="1.5" fill="white"/>
-              <rect x="17" y="18.5" width="8" height="6.5" rx="1.5" fill="white"/>
-            </svg>
-            Marketplace
-          </a>
+        {/* Right actions — desktop */}
+        <div className="hidden lg:flex items-center gap-2.5" style={{ justifySelf: 'end' }}>
+          {socialBtns}
           <a
             href="tel:8162224238"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-85"
-            style={{ background: MINT }}
+            className="flex items-center gap-2 px-5 rounded-xl text-xs font-bold transition-all duration-200"
+            style={{ height: 40, background: MINT_GRAD, color: '#04130c', boxShadow: `${MINT_GLOW}, inset 0 1px 0 rgba(255,255,255,0.2)` }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'none'}
           >
-            <Phone size={13} strokeWidth={2.5} /> Call Us
+            <Phone size={14} strokeWidth={2.6} /> Call Us
           </a>
         </div>
 
-        <button
-          className="lg:hidden p-2 rounded-lg transition-colors"
-          style={{ justifySelf: 'end', gridColumn: '3', color: '#9ca3af' }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.07)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-          onClick={() => setMenuOpen(v => !v)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        {/* Right actions — mobile: social icons stay visible + hamburger */}
+        <div className="flex lg:hidden items-center gap-2" style={{ justifySelf: 'end', gridColumn: '3' }}>
+          {socialBtns}
+          <button
+            className="flex items-center justify-center rounded-xl transition-colors"
+            style={{ width: 40, height: 40, color: '#c5c9d4', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}
+            onClick={() => setMenuOpen(v => !v)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -185,7 +213,7 @@ function Navbar() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22 }}
             className="lg:hidden overflow-hidden"
-            style={{ background: 'rgba(17,19,24,0.98)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 8px 20px rgba(0,0,0,0.4)' }}
+            style={{ background: 'rgba(14,16,22,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 16px 32px -8px rgba(0,0,0,0.6)' }}
           >
             <div className="px-6 py-5 flex flex-col gap-4">
               {links.map(l => (
@@ -194,7 +222,7 @@ function Navbar() {
                   href={l.href}
                   onClick={() => setMenuOpen(false)}
                   className="text-sm font-semibold uppercase tracking-wider transition-colors"
-                  style={{ color: '#9ca3af' }}
+                  style={{ color: '#9aa0ac' }}
                 >
                   {l.label}
                 </a>
@@ -223,10 +251,10 @@ function Navbar() {
                 </a>
                 <a
                   href="tel:8162224238"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white"
-                  style={{ background: MINT }}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold"
+                  style={{ background: MINT_GRAD, color: '#04130c', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)' }}
                 >
-                  <Phone size={15} /> (816) 222-4238
+                  <Phone size={15} strokeWidth={2.6} /> (816) 222-4238
                 </a>
               </div>
             </div>
@@ -250,9 +278,11 @@ function Hero() {
       style={{ background: DARK, paddingTop: '64px', ...GRID_BG }}
     >
       {/* ── Background depth layers ── */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 55% at 50% 55%, rgba(0,200,150,0.07) 0%, transparent 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ width: 560, height: 560, top: '-12%', left: '-8%', background: 'radial-gradient(circle, rgba(200,160,0,0.06) 0%, transparent 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ width: 460, height: 460, bottom: '5%', right: '-6%', background: 'radial-gradient(circle, rgba(0,200,150,0.06) 0%, transparent 70%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 85% 60% at 50% 42%, rgba(0,224,138,0.10) 0%, transparent 68%)' }} />
+      <div className="absolute pointer-events-none" style={{ width: 680, height: 680, top: '-16%', left: '-12%', background: 'radial-gradient(circle, rgba(230,168,0,0.07) 0%, transparent 70%)' }} />
+      <div className="absolute pointer-events-none" style={{ width: 560, height: 560, bottom: '2%', right: '-10%', background: 'radial-gradient(circle, rgba(0,224,138,0.07) 0%, transparent 70%)' }} />
+      {/* Top vignette for navbar legibility */}
+      <div className="absolute inset-x-0 top-0 h-40 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), transparent)' }} />
 
       {/* ── Main content ── */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-20 w-full py-8 sm:py-12 px-5 sm:px-8">
@@ -267,9 +297,10 @@ function Hero() {
             {BADGES.map(b => (
               <span
                 key={b}
-                className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-md"
-                style={{ background: 'rgba(255,255,255,0.06)', color: '#8b8f9a', border: '1px solid rgba(255,255,255,0.08)' }}
+                className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] px-3.5 py-1.5 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.04)', color: '#9aa0ac', border: '1px solid rgba(255,255,255,0.08)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}
               >
+                <span className="w-1 h-1 rounded-full" style={{ background: MINT }} />
                 {b}
               </span>
             ))}
@@ -289,7 +320,7 @@ function Hero() {
               textTransform: 'uppercase',
               textAlign: 'center',
               display: 'block',
-              color: '#7ED957',
+              color: '#00E08A',
               WebkitTextStroke: '1px rgba(255,255,255,0.06)',
               marginBottom: '0.35em',
             }}
@@ -314,7 +345,7 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.26, duration: 0.45 }}
             className="text-base sm:text-lg mb-5 max-w-md text-center leading-relaxed"
-            style={{ color: '#8b8f9a' }}
+            style={{ color: '#9aa0ac' }}
           >
             New, refurbished &amp; overstock items priced from <strong style={{ color: '#ffffff' }}>$2</strong>, right here in Liberty, MO.
           </motion.p>
@@ -337,12 +368,13 @@ function Hero() {
                 maxWidth: '95%',
                 margin: '0 auto',
                 width: 'fit-content',
-                background: 'rgba(200,160,0,0.12)',
-                border: '1px solid rgba(200,160,0,0.3)',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
               }}
             >
-              <span style={{ color: '#ffd700', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase', textAlign: 'center' }}>
-                ⚡&nbsp; Prices from $2 &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
+              <span style={{ color: '#dde0e6', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase', textAlign: 'center' }}>
+                <span style={{ color: GOLD }}>⚡</span>&nbsp; Prices from <span style={{ color: GOLD }}>$2</span> &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
               </span>
             </div>
           </motion.div>
@@ -358,7 +390,7 @@ function Hero() {
               href="#products"
               className="flex items-center gap-2.5 font-black px-9 py-4 rounded-xl text-base transition-opacity hover:opacity-90"
               style={{
-                background: 'linear-gradient(135deg, #00C896 0%, #00a87a 100%)',
+                background: 'linear-gradient(135deg, #00E08A 0%, #00b873 100%)',
                 color: '#ffffff',
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
@@ -382,7 +414,7 @@ function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.52 }}
             className="flex items-center justify-center gap-2 text-sm"
-            style={{ color: '#8b8f9a' }}
+            style={{ color: '#9aa0ac' }}
           >
             <Clock size={13} color={MINT} />
             Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
@@ -392,7 +424,7 @@ function Hero() {
       {/* ── Scrolling ticker ── */}
       <div
         className="relative z-20 overflow-hidden py-2.5"
-        style={{ background: 'rgba(0,200,150,0.1)', borderTop: '1px solid rgba(0,200,150,0.2)' }}
+        style={{ background: 'rgba(0,224,138,0.1)', borderTop: '1px solid rgba(0,224,138,0.2)' }}
       >
         <motion.div
           className="flex whitespace-nowrap"
@@ -414,7 +446,7 @@ function Hero() {
       {/* Scroll caret */}
       <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-20">
         <motion.div animate={{ y: [0, 7, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}>
-          <ChevronDown size={22} color="rgba(0,200,150,0.45)" />
+          <ChevronDown size={22} color="rgba(0,224,138,0.45)" />
         </motion.div>
       </div>
     </section>
@@ -432,25 +464,25 @@ function TreasureHunt() {
   ]
 
   return (
-    <section id="pricing" className="py-14 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="pricing" className="py-20 sm:py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-8">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Pricing System
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight mb-4"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             TREASURE HUNT SAVINGS
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-base max-w-lg mx-auto leading-relaxed" style={{ color: '#8b8f9a' }}>
+          <motion.p variants={fadeUp} className="text-base max-w-lg mx-auto leading-relaxed" style={{ color: '#9aa0ac' }}>
             Every item is color-tagged for easy pricing. No guessing, no haggling.
           </motion.p>
         </Reveal>
 
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
+        <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8">
           <Reveal className="w-full lg:w-1/2 order-2 lg:order-1">
             <div className="flex flex-col gap-3" id="pricing-cards">
               {tags.map(({ color, label, price }) => (
@@ -458,7 +490,7 @@ function TreasureHunt() {
                   key={label}
                   variants={fadeUp}
                   className="flex items-center gap-4 rounded-xl px-5 py-4"
-                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: '0 1px 6px rgba(0,0,0,0.2)' }}
+                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
@@ -469,32 +501,36 @@ function TreasureHunt() {
                   <span className="flex-1 font-bold text-base" style={{ color: '#e2e4e8' }}>{label}</span>
                   <span
                     className="font-black text-2xl"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+                    style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
                   >
                     {price}
                   </span>
                 </motion.div>
               ))}
-              <motion.p variants={fadeUp} className="text-xs mt-3 text-center" style={{ color: '#6b7280' }}>
-                Prices drop daily. The earlier you shop, the more you save.
-              </motion.p>
             </div>
           </Reveal>
 
-          {/* Poster */}
-          <Reveal className="w-full sm:max-w-sm lg:w-1/2 lg:max-w-none order-1 lg:order-2 flex justify-center">
+          {/* Poster — on desktop scaled to the tag-stack height (Red→Yellow), aspect ratio kept */}
+          <Reveal className="w-full sm:max-w-sm lg:max-w-none lg:w-1/2 order-1 lg:order-2 flex justify-center lg:relative">
             <motion.div
               variants={fadeUp}
-              className="rounded-xl overflow-hidden w-full sm:max-w-sm lg:max-w-md"
+              className="w-full sm:max-w-sm lg:absolute lg:inset-0 lg:w-auto lg:max-w-none flex items-center justify-center"
             >
               <img
                 src={pricingPoster}
                 alt="Treasure Hunt Pricing System"
-                className="w-full h-auto object-contain block"
+                className="w-full h-auto object-contain block rounded-xl lg:w-auto lg:h-full"
+                style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
               />
             </motion.div>
           </Reveal>
         </div>
+
+        <Reveal className="mt-5">
+          <motion.p variants={fadeUp} className="text-xs text-center" style={{ color: '#868d99' }}>
+            Prices drop daily. The earlier you shop, the more you save.
+          </motion.p>
+        </Reveal>
       </div>
     </section>
   )
@@ -509,20 +545,20 @@ function ShelfDeals() {
   ]
 
   return (
-    <section id="shelf-deals" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="shelf-deals" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-8">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Shelf Deals
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-tight mb-4"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             MORE WAYS TO SAVE
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-base max-w-2xl mx-auto leading-relaxed" style={{ color: '#8b8f9a' }}>
+          <motion.p variants={fadeUp} className="text-base max-w-2xl mx-auto leading-relaxed" style={{ color: '#9aa0ac' }}>
             In addition to our bin pricing system, we also offer shelf items throughout the store. Each item is individually priced and typically 40-50% lower than Amazon prices, giving you even more ways to save on quality products.
           </motion.p>
         </Reveal>
@@ -533,17 +569,18 @@ function ShelfDeals() {
               <motion.div
                 key={label}
                 variants={fadeUp}
+                whileHover={CARD_HOVER}
                 className="rounded-xl p-6 text-center"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }}
+                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
               >
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 mx-auto"
-                  style={{ background: 'rgba(0,200,150,0.12)', border: '1px solid rgba(0,200,150,0.2)' }}
+                  style={{ background: 'rgba(0,224,138,0.12)', border: '1px solid rgba(0,224,138,0.2)' }}
                 >
                   <Icon size={19} color={MINT} />
                 </div>
                 <h3 className="font-black text-sm mb-2" style={{ color: '#ffffff' }}>{label}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#8b8f9a' }}>{desc}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#9aa0ac' }}>{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -556,7 +593,7 @@ function ShelfDeals() {
 // ─── CLAW MACHINE ────────────────────────────────────────────────────────────
 function ClawMachine() {
   return (
-    <section id="claw-machine" className="py-10 relative flex items-center" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="claw-machine" className="py-16 sm:py-20 relative flex items-center" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8 w-full">
         <Reveal className="text-center mb-6">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
@@ -565,11 +602,11 @@ function ClawMachine() {
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2rem,5vw,4rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             CLAW MACHINE
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-sm mt-2" style={{ color: '#8b8f9a' }}>
+          <motion.p variants={fadeUp} className="text-sm mt-2" style={{ color: '#9aa0ac' }}>
             Fun for the whole family!
           </motion.p>
         </Reveal>
@@ -579,7 +616,7 @@ function ClawMachine() {
             <motion.div
               variants={fadeUp}
               className="rounded-xl overflow-hidden"
-              style={{ border: `1px solid ${CARD_BORDER}`, background: CARD_BG }}
+              style={{ border: `1px solid ${CARD_BORDER}`, background: CARD_BG, boxShadow: CARD_SHADOW }}
             >
               <img
                 src={clawMachineImg}
@@ -591,20 +628,20 @@ function ClawMachine() {
 
           <Reveal className="w-full lg:max-w-lg">
             <div className="flex flex-col gap-5">
-              <motion.p variants={fadeUp} className="text-base leading-relaxed" style={{ color: '#9ca3af' }}>
+              <motion.p variants={fadeUp} className="text-base leading-relaxed" style={{ color: '#9aa0ac' }}>
                 We have an exciting claw machine right inside our store! Perfect for kids and adults alike. Try your luck and win amazing prizes!
               </motion.p>
 
               <motion.div
                 variants={fadeUp}
                 className="inline-flex items-center gap-3 rounded-xl px-5 py-3.5 self-start"
-                style={{ background: 'rgba(0,200,150,0.1)', border: '1px solid rgba(0,200,150,0.25)' }}
+                style={{ background: 'rgba(0,224,138,0.1)', border: '1px solid rgba(0,224,138,0.25)' }}
               >
                 <span className="text-lg font-black" style={{ color: '#ffffff' }}>🪙 $1 = 4 Tokens</span>
                 <span className="text-sm font-semibold" style={{ color: MINT }}>Play &amp; Win!</span>
               </motion.div>
 
-              <motion.p variants={fadeUp} className="text-sm leading-relaxed" style={{ color: '#8b8f9a' }}>
+              <motion.p variants={fadeUp} className="text-sm leading-relaxed" style={{ color: '#9aa0ac' }}>
                 While you shop, let the kids play! Hours of fun waiting for you at Bins &amp; Deals.
               </motion.p>
 
@@ -612,7 +649,7 @@ function ClawMachine() {
                 variants={fadeUp}
                 href="#location"
                 className="self-start flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-white text-sm transition-opacity hover:opacity-85"
-                style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00a87a 100%)` }}
+                style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
               >
                 <MapPin size={15} strokeWidth={2.5} /> Come Visit Us
               </motion.a>
@@ -634,16 +671,16 @@ function About() {
   ]
 
   return (
-    <section id="about" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="about" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-8">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             About Us
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2.8rem,6vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             YOUR LOCAL DEAL DESTINATION
           </motion.h2>
@@ -651,18 +688,18 @@ function About() {
 
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <Reveal>
-            <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-4" style={{ color: '#9ca3af' }}>
+            <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-4" style={{ color: '#9aa0ac' }}>
               At <strong style={{ color: '#ffffff' }}>Bins and Deals</strong>, we believe everyone deserves access to quality products without breaking the bank. Our store is packed with{' '}
-              <strong style={{ color: '#00C896' }}>new, refurbished, and gently used items</strong> across every category, all priced far below retail.
+              <strong style={{ color: '#00E08A' }}>new, refurbished, and gently used items</strong> across every category, all priced far below retail.
             </motion.p>
-            <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-8" style={{ color: '#9ca3af' }}>
+            <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-8" style={{ color: '#9aa0ac' }}>
               Whether you're hunting for electronics, home goods, clothing, or toys, you'll always find something worth grabbing at a price you won't believe. Deals change constantly, so every visit is a new adventure.
             </motion.p>
             <motion.a
               variants={fadeUp}
               href="tel:8162224238"
               className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-white text-sm transition-opacity hover:opacity-85"
-              style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00a87a 100%)` }}
+              style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
             >
               <Phone size={15} strokeWidth={2.5} /> Call Us Today
             </motion.a>
@@ -674,14 +711,15 @@ function About() {
                 <motion.div
                   key={s.label}
                   variants={fadeUp}
+                  whileHover={CARD_HOVER}
                   className="rounded-xl p-7 text-center"
-                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: '0 2px 10px rgba(0,0,0,0.2)' }}
+                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
                 >
                   <div
                     className="text-[clamp(2.2rem,5vw,3rem)] font-black leading-none mb-2"
                     style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      background: 'linear-gradient(135deg, #00C896 0%, #FFD700 100%)',
+                      fontFamily: "'Bricolage Grotesque', sans-serif",
+                      backgroundImage: 'linear-gradient(135deg, #00E08A 0%, #FFB627 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -689,7 +727,7 @@ function About() {
                   >
                     {s.display}
                   </div>
-                  <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#6b7280' }}>{s.label}</div>
+                  <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#868d99' }}>{s.label}</div>
                 </motion.div>
               ))}
             </div>
@@ -713,20 +751,20 @@ function Products() {
   ]
 
   return (
-    <section id="products" className="py-14 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="products" className="py-20 sm:py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-8">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             What We Sell
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(3rem,8vw,6.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             SOMETHING FOR EVERYONE
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-base max-w-lg mx-auto mt-4" style={{ color: '#8b8f9a' }}>
+          <motion.p variants={fadeUp} className="text-base max-w-lg mx-auto mt-4" style={{ color: '#9aa0ac' }}>
             Thousands of items across every category: new, refurbished, and used. All at prices that make you do a double-take.
           </motion.p>
         </Reveal>
@@ -737,17 +775,18 @@ function Products() {
               <motion.div
                 key={label}
                 variants={fadeUp}
+                whileHover={CARD_HOVER}
                 className="rounded-xl p-6"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}
+                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
               >
                 <div
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: 'rgba(0,200,150,0.12)', border: '1px solid rgba(0,200,150,0.2)' }}
+                  style={{ background: 'rgba(0,224,138,0.12)', border: '1px solid rgba(0,224,138,0.2)' }}
                 >
                   <Icon size={20} color={MINT} />
                 </div>
                 <h3 className="font-bold text-sm mb-1.5 leading-tight" style={{ color: '#ffffff' }}>{label}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#8b8f9a' }}>{desc}</p>
+                <p className="text-xs leading-relaxed" style={{ color: '#9aa0ac' }}>{desc}</p>
               </motion.div>
             ))}
           </div>
@@ -757,14 +796,14 @@ function Products() {
           <motion.div
             variants={fadeUp}
             className="rounded-xl p-10 sm:p-14 text-center"
-            style={{ background: 'linear-gradient(135deg, #00C896 0%, #007A5A 100%)' }}
+            style={{ background: 'linear-gradient(135deg, #00E08A 0%, #008f5a 100%)' }}
           >
             <div className="flex justify-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => <Star key={i} size={16} color="#FFD700" fill="#FFD700" />)}
+              {[...Array(5)].map((_, i) => <Star key={i} size={16} color="#FFB627" fill="#FFB627" />)}
             </div>
             <h3
               className="text-[clamp(2rem,5vw,4rem)] font-black text-white leading-none mb-3"
-              style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
             >
               NEW INVENTORY EVERY WEEK
             </h3>
@@ -815,20 +854,20 @@ function FindUsOnline() {
   ]
 
   return (
-    <section id="connect" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="connect" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-8">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Connect With Us
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             FIND US ONLINE
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-base mt-4" style={{ color: '#8b8f9a' }}>
+          <motion.p variants={fadeUp} className="text-base mt-4" style={{ color: '#9aa0ac' }}>
             Follow along, shop smart, save big!
           </motion.p>
         </Reveal>
@@ -839,8 +878,9 @@ function FindUsOnline() {
               <motion.div
                 key={label}
                 variants={fadeUp}
+                whileHover={CARD_HOVER}
                 className="flex flex-col rounded-xl p-8"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}
+                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
               >
                 <div className="flex items-center gap-3 mb-5">
                   <div
@@ -852,7 +892,7 @@ function FindUsOnline() {
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#1877F2' }}>{badgeLabel}</span>
                 </div>
                 <h3 className="font-black text-lg mb-2 leading-tight" style={{ color: '#ffffff' }}>{label}</h3>
-                <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: '#8b8f9a' }}>{sub}</p>
+                <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: '#9aa0ac' }}>{sub}</p>
                 <a
                   href={href}
                   target="_blank"
@@ -896,16 +936,16 @@ function Location() {
   ]
 
   return (
-    <section id="location" className="py-14 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
+    <section id="location" className="py-20 sm:py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-8">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Find Us
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             VISIT OUR STORE
           </motion.h2>
@@ -919,18 +959,18 @@ function Location() {
                   key={i}
                   variants={fadeUp}
                   className="flex gap-4 rounded-xl p-5"
-                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: '0 1px 8px rgba(0,0,0,0.2)' }}
+                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
                 >
                   <div
                     className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ background: 'rgba(0,200,150,0.12)', border: '1px solid rgba(0,200,150,0.2)' }}
+                    style={{ background: 'rgba(0,224,138,0.12)', border: '1px solid rgba(0,224,138,0.2)' }}
                   >
                     <Icon size={17} color={MINT} />
                   </div>
                   <div>
                     <p className="font-bold text-base leading-tight mb-0.5" style={{ color: '#ffffff' }}>{title}</p>
-                    <p className="text-sm" style={{ color: '#8b8f9a' }}>{sub}</p>
-                    {detail && <p className="text-xs mt-0.5" style={{ color: '#6b7280' }}>{detail}</p>}
+                    <p className="text-sm" style={{ color: '#9aa0ac' }}>{sub}</p>
+                    {detail && <p className="text-xs mt-0.5" style={{ color: '#868d99' }}>{detail}</p>}
                     {link && (
                       <a
                         href={link.href}
@@ -949,7 +989,7 @@ function Location() {
                 variants={fadeUp}
                 href="tel:8162224238"
                 className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-white text-sm transition-opacity hover:opacity-85 mt-2"
-                style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00a87a 100%)` }}
+                style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
               >
                 <Phone size={15} strokeWidth={2.5} /> Call Us Now
               </motion.a>
@@ -960,7 +1000,7 @@ function Location() {
             <motion.div
               variants={fadeUp}
               className="rounded-xl overflow-hidden"
-              style={{ height: '460px', border: `1px solid ${CARD_BORDER}`, boxShadow: '0 2px 12px rgba(0,0,0,0.3)' }}
+              style={{ height: '460px', border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
             >
               <iframe
                 title="Bins and Deals Location"
@@ -994,20 +1034,20 @@ function Hours() {
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
 
   return (
-    <section id="hours" className="py-14 relative" style={{ background: DARK, ...GRID_BG }}>
+    <section id="hours" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
       <div className="max-w-2xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-7">
+        <Reveal className="text-center mb-10">
           <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
             Store Hours
           </motion.p>
           <motion.h2
             variants={fadeUp}
             className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bebas Neue', sans-serif", color: '#ffffff' }}
+            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
           >
             COME SEE US
           </motion.h2>
-          <motion.p variants={fadeUp} className="text-base mt-4" style={{ color: '#8b8f9a' }}>
+          <motion.p variants={fadeUp} className="text-base mt-4" style={{ color: '#9aa0ac' }}>
             Open 7 days a week. Deals don't take days off.
           </motion.p>
         </Reveal>
@@ -1016,9 +1056,9 @@ function Hours() {
           <motion.div
             variants={fadeUp}
             className="rounded-xl overflow-hidden"
-            style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: '0 2px 16px rgba(0,0,0,0.3)', overflow: 'hidden', borderRadius: '0.75rem' }}
+            style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW, overflow: 'hidden', borderRadius: '0.75rem' }}
           >
-            <div className="px-6 py-4" style={{ background: `linear-gradient(135deg, ${MINT} 0%, #007A5A 100%)` }}>
+            <div className="px-6 py-4" style={{ background: `linear-gradient(135deg, ${MINT} 0%, #008f5a 100%)` }}>
               <div className="flex items-center gap-3">
                 <Clock size={17} color="rgba(255,255,255,0.85)" />
                 <span className="text-white font-black text-sm uppercase tracking-widest">Weekly Schedule</span>
@@ -1032,7 +1072,7 @@ function Hours() {
                     key={day}
                     className="flex items-center justify-between px-6 py-3.5"
                     style={{
-                      ...(isToday ? { background: 'rgba(0,200,150,0.1)' } : {}),
+                      ...(isToday ? { background: 'rgba(0,224,138,0.1)' } : {}),
                       borderBottom: idx < days.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                     }}
                   >
@@ -1040,14 +1080,14 @@ function Hours() {
                       {isToday && (
                         <span
                           className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide"
-                          style={{ background: 'rgba(0,200,150,0.2)', color: MINT }}
+                          style={{ background: 'rgba(0,224,138,0.2)', color: MINT }}
                         >
                           Today
                         </span>
                       )}
-                      <span className="font-semibold text-sm" style={{ color: isToday ? '#ffffff' : '#9ca3af' }}>{day}</span>
+                      <span className="font-semibold text-sm" style={{ color: isToday ? '#ffffff' : '#9aa0ac' }}>{day}</span>
                     </div>
-                    <span className="font-semibold text-sm tabular-nums" style={{ color: isToday ? '#ffffff' : '#6b7280' }}>
+                    <span className="font-semibold text-sm tabular-nums" style={{ color: isToday ? '#ffffff' : '#868d99' }}>
                       {hours}
                     </span>
                   </div>
@@ -1058,7 +1098,7 @@ function Hours() {
               className="px-6 py-3.5 flex items-center justify-between"
               style={{ background: 'rgba(0,0,0,0.25)', borderTop: `1px solid ${CARD_BORDER}` }}
             >
-              <p className="text-xs" style={{ color: '#6b7280' }}>Holiday hours may vary</p>
+              <p className="text-xs" style={{ color: '#868d99' }}>Holiday hours may vary</p>
               <a href="tel:8162224238" className="flex items-center gap-1.5 text-xs font-bold hover:underline" style={{ color: MINT }}>
                 <Phone size={11} strokeWidth={2.5} /> Call to confirm
               </a>
@@ -1088,7 +1128,7 @@ function PaymentMethods() {
   return (
     <div className="py-8 px-5 sm:px-8" style={{ background: SURFACE_DEEP, borderTop: `1px solid ${CARD_BORDER}`, ...GRID_BG }}>
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-        <p className="text-xs font-bold uppercase tracking-widest shrink-0" style={{ color: '#6b7280' }}>We Accept</p>
+        <p className="text-xs font-bold uppercase tracking-widest shrink-0" style={{ color: '#868d99' }}>We Accept</p>
         <div className="w-px h-4 hidden sm:block" style={{ background: 'rgba(255,255,255,0.1)' }} />
         <div className="flex items-center gap-8 flex-wrap justify-center">
           {methods.map(({ icon, label }) => (
@@ -1099,7 +1139,7 @@ function PaymentMethods() {
               >
                 {icon}
               </div>
-              <span className="text-sm font-semibold" style={{ color: '#8b8f9a' }}>{label}</span>
+              <span className="text-sm font-semibold" style={{ color: '#9aa0ac' }}>{label}</span>
             </div>
           ))}
         </div>
@@ -1121,25 +1161,25 @@ function Footer() {
             <h3 className="text-xl font-black mb-3" style={{ fontFamily: "'Poppins', sans-serif", color: '#ffffff' }}>
               BINS & DEALS
             </h3>
-            <p className="text-sm leading-relaxed" style={{ color: '#6b7280' }}>
+            <p className="text-sm leading-relaxed" style={{ color: '#868d99' }}>
               Your local discount store for new, refurbished, and used products at unbeatable prices in Liberty, MO.
             </p>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#6b7280' }}>Store Hours</h4>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#868d99' }}>Store Hours</h4>
             <div className="space-y-2 text-sm">
-              <p style={{ color: '#6b7280' }}><span style={{ color: '#c9ccd4', fontWeight: 600 }}>Mon-Sat:</span> 10:00 AM - 8:00 PM</p>
-              <p style={{ color: '#6b7280' }}><span style={{ color: '#c9ccd4', fontWeight: 600 }}>Sunday:</span> 11:00 AM - 7:00 PM</p>
+              <p style={{ color: '#868d99' }}><span style={{ color: '#c5c9d4', fontWeight: 600 }}>Mon-Sat:</span> 10:00 AM - 8:00 PM</p>
+              <p style={{ color: '#868d99' }}><span style={{ color: '#c5c9d4', fontWeight: 600 }}>Sunday:</span> 11:00 AM - 7:00 PM</p>
             </div>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#6b7280' }}>Contact & Location</h4>
-            <div className="space-y-3 text-sm" style={{ color: '#6b7280' }}>
+            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#868d99' }}>Contact & Location</h4>
+            <div className="space-y-3 text-sm" style={{ color: '#868d99' }}>
               <p className="flex items-start gap-2.5">
                 <MapPin size={14} color={MINT} className="mt-0.5 shrink-0" />
                 892 Rte 291, Liberty, MO 64068
               </p>
-              <a href="tel:8162224238" className="flex items-center gap-2.5 transition-colors" style={{ color: '#6b7280' }}>
+              <a href="tel:8162224238" className="flex items-center gap-2.5 transition-colors" style={{ color: '#868d99' }}>
                 <Phone size={14} color={MINT} className="shrink-0" />
                 (816) 222-4238
               </a>
@@ -1148,11 +1188,11 @@ function Footer() {
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs" style={{ color: '#4b5563' }}>© {new Date().getFullYear()} Bins & Deals. All rights reserved.</p>
+          <p className="text-xs" style={{ color: '#868d99' }}>© {new Date().getFullYear()} Bins & Deals. All rights reserved.</p>
           <a
             href="tel:8162224238"
             className="flex items-center gap-2 font-bold px-5 py-2.5 rounded-xl text-white text-xs transition-opacity hover:opacity-85"
-            style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00a87a 100%)` }}
+            style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
           >
             <Phone size={12} strokeWidth={2.5} /> Call Us
           </a>
@@ -1165,7 +1205,9 @@ function Footer() {
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function App() {
   return (
-    <div className="min-h-screen" style={{ background: DARK, ...GRID_BG }}>
+    <div className="min-h-screen relative" style={{ background: DARK }}>
+      {/* Global film-grain overlay for premium texture */}
+      <div className="grain" aria-hidden="true" />
       <BackToTop />
       <Navbar />
       <Hero />

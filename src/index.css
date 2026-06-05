@@ -5,14 +5,17 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    background-color: #111318;
+    background-color: #08090c;
     color: #e2e4e8;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4 {
-    font-family: 'Bebas Neue', 'Inter', sans-serif;
+    font-family: 'Bricolage Grotesque', 'Inter', sans-serif;
+    letter-spacing: -0.02em;
   }
 
 }
@@ -21,85 +24,116 @@
 
   /* ── Gradients ── */
   .text-gradient {
-    background: linear-gradient(135deg, #00C896 0%, #00a87a 40%, #e6a800 100%);
+    background: linear-gradient(135deg, #00E08A 0%, #5dffba 55%, #FFB627 130%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-gradient-subtle {
-    background: linear-gradient(135deg, #009e78 0%, #00C896 100%);
+    background: linear-gradient(135deg, #00b873 0%, #00E08A 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .bg-mint-gradient {
-    background: linear-gradient(135deg, #00C896 0%, #00b882 100%);
+    background: linear-gradient(135deg, #00E08A 0%, #00b873 100%);
   }
 
   .bg-hero-gradient {
-    background: linear-gradient(135deg, #00C896 0%, #00e6ae 45%, #FFD700 100%);
+    background: linear-gradient(135deg, #00E08A 0%, #5dffba 45%, #FFB627 130%);
   }
 
   .bg-mint-gradient-deep {
-    background: linear-gradient(135deg, #00C896 0%, #007A5A 100%);
+    background: linear-gradient(135deg, #00E08A 0%, #008f5a 100%);
   }
 
-  /* ── Neon hero glow — toned down for light theme ── */
+  /* ── Neon hero glow ── */
   .text-neon-hero {
-    background: linear-gradient(135deg, #00C896 0%, #00b882 45%, #e6a800 100%);
+    background: linear-gradient(135deg, #00E08A 0%, #5dffba 55%, #FFB627 130%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
+  /* ── Film grain overlay ── */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
   /* ── Glassmorphism dark ── */
   .glass {
-    background: rgba(17, 19, 24, 0.7);
+    background: rgba(8, 9, 12, 0.55);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   }
 
   .glass-scrolled {
-    background: rgba(17, 19, 24, 0.97);
-    backdrop-filter: blur(28px) saturate(200%);
-    -webkit-backdrop-filter: blur(28px) saturate(200%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(8, 9, 12, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.6);
   }
 
-  /* ── Dark card ── */
+  /* ── Dark card — layered depth, lit-from-above highlight, gradient border on hover ── */
   .card {
-    background: #1c2030;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 0.75rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
-    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-    transform-style: preserve-3d;
+    position: relative;
+    background: #15171f;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 18px 44px -16px rgba(0, 0, 0, 0.65);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(160deg, rgba(0, 224, 138, 0.4), transparent 42%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
   }
 
   .card:hover {
-    background: #1c2030;
-    border-color: rgba(0, 200, 150, 0.4);
+    transform: translateY(-4px);
+    border-color: rgba(0, 224, 138, 0.3);
     box-shadow:
-      0 0 0 1px rgba(0, 200, 150, 0.15),
-      0 8px 30px rgba(0, 200, 150, 0.12),
-      0 4px 12px rgba(0, 0, 0, 0.2);
+      inset 0 1px 0 rgba(255, 255, 255, 0.07),
+      0 1px 2px rgba(0, 0, 0, 0.5),
+      0 26px 50px -14px rgba(0, 0, 0, 0.7),
+      0 0 34px -8px rgba(0, 224, 138, 0.28);
   }
 
-  /* ── Subtle glows (light-safe) ── */
+  .card:hover::before { opacity: 1; }
+
+  /* ── Subtle glows ── */
   .glow-mint-lg {
-    box-shadow: 0 4px 16px rgba(0, 200, 150, 0.25), 0 2px 6px rgba(0, 200, 150, 0.12);
+    box-shadow: 0 10px 30px -6px rgba(0, 224, 138, 0.3), 0 2px 8px rgba(0, 224, 138, 0.14);
   }
 
   .glow-gold {
-    box-shadow: 0 4px 16px rgba(200, 160, 0, 0.2);
+    box-shadow: 0 10px 30px -6px rgba(255, 182, 39, 0.24);
   }
 
   .section-glow-divider {
-    background: linear-gradient(90deg, transparent 0%, rgba(0,200,150,0.35) 30%, rgba(200,160,0,0.25) 50%, rgba(0,200,150,0.35) 70%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(0,224,138,0.32) 30%, rgba(255,182,39,0.22) 50%, rgba(0,224,138,0.32) 70%, transparent 100%);
     height: 1px;
     width: 100%;
   }
@@ -129,9 +163,9 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.45) 50%, transparent 80%);
+    background: linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.28) 50%, transparent 80%);
     transform: translateX(-100%) skewX(-20deg);
-    animation: shine-sweep 2.5s ease-in-out infinite;
+    animation: shine-sweep 4.5s ease-in-out infinite;
     pointer-events: none;
     border-radius: inherit;
   }
@@ -149,7 +183,7 @@
     position: absolute;
     bottom: -3px; left: 0;
     width: 0; height: 2px;
-    background: linear-gradient(90deg, #00C896, #e6a800);
+    background: linear-gradient(90deg, #00E08A, #FFB627);
     border-radius: 2px;
     transition: width 0.3s ease;
   }
@@ -165,43 +199,43 @@
     position: absolute;
     bottom: -6px; left: 0; right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #00C896 0%, #e6a800 100%);
+    background: linear-gradient(90deg, #00E08A 0%, #FFB627 100%);
     border-radius: 3px;
   }
 
   /* ── Subtle grid bg texture ── */
   .grid-texture {
     background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
     background-size: 56px 56px;
   }
 
   /* ── Section alternate ── */
   .section-alt {
-    background: linear-gradient(175deg, #161922 0%, #1a1d27 50%, #161922 100%);
+    background: linear-gradient(175deg, #0d0f13 0%, #111319 50%, #0d0f13 100%);
   }
 
   /* ── Claw Machine token badge animation ── */
   @keyframes claw-glow-pulse {
     0%, 100% {
       box-shadow:
-        0 0 8px rgba(147,51,234,0.3),
-        0 0 20px rgba(147,51,234,0.15),
+        0 0 6px rgba(147,51,234,0.22),
+        0 0 16px rgba(147,51,234,0.1),
         0 2px 8px rgba(0,0,0,0.08);
-      border-color: rgba(147,51,234,0.4);
+      border-color: rgba(147,51,234,0.32);
     }
     50% {
       box-shadow:
-        0 0 12px rgba(250,204,21,0.4),
-        0 0 28px rgba(250,204,21,0.2),
+        0 0 8px rgba(250,204,21,0.28),
+        0 0 22px rgba(250,204,21,0.13),
         0 2px 8px rgba(0,0,0,0.08);
-      border-color: rgba(250,204,21,0.5);
+      border-color: rgba(250,204,21,0.38);
     }
   }
 
   .claw-token-badge {
-    animation: claw-glow-pulse 2.2s ease-in-out infinite;
+    animation: claw-glow-pulse 3.4s ease-in-out infinite;
   }
 
   /* ── Purple heading underline ── */
