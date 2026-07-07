@@ -157,6 +157,6 @@ https://binsanddeals.com
 
 Author
 
-Naveen Madhav
+Naveen Sereddy
 
 Portfolio Project Based On A Real Client Engagement
