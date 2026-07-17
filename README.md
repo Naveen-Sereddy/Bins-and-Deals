@@ -1,162 +1,52 @@
-Bins & Deals
+# Bins & Deals — Liquidation Retail Website
 
-Real Client Project | UX Research | Product Design | Frontend Development
+**Live site:** [binsanddeals.com](https://binsanddeals.com) · **Case study:** [naveensereddy.com/case-bins](https://naveensereddy.com/case-bins)
 
-Live Website: https://binsanddeals.com
+A real client project, not a portfolio simulation. Bins & Deals is a liquidation retail store in Liberty, Missouri — new, refurbished, and overstock inventory that changes weekly, sold on a color-tag pricing system where every item gets cheaper the longer it sits on the shelf. I partnered directly with the owner to design, build, and launch the store's first real website: research, UX, UI, frontend development, deployment, SEO, and the maintenance since.
 
-⸻
+<img width="1440" height="900" alt="Homepage hero" src="screenshots/hero-home.png" />
 
-Overview
+<img width="1440" height="900" alt="Pricing page — color-tag system" src="screenshots/hero-pricing.png" />
 
-Bins & Deals is a liquidation retail business located in Liberty, Missouri that specializes in discounted overstock, liquidation, returned, and surplus inventory.
+<img width="1440" height="900" alt="In-store claw machine promotion" src="screenshots/hero-claw-machine.png" />
 
-I partnered directly with the business owner to design, build, and launch a customer-focused website that improves how customers discover the business, understand its pricing model, and access important store information.
+<img width="1440" height="900" alt="Store hours and location" src="screenshots/hero-hours.png" />
 
-Unlike a portfolio concept, this was a real business project that involved stakeholder interviews, customer conversations, UX research, design, development, deployment, SEO implementation, and post-launch support.
+<img width="1440" height="900" alt="Facebook and Marketplace integration" src="screenshots/hero-social.png" />
 
-⸻
+## Why I built it this way
 
-My Role
+Before this site existed, the business ran entirely on foot traffic, word of mouth, and a Facebook page. The owner's biggest recurring headache was the phone: people calling to ask what time the store closed, or driving over and leaving confused about how pricing worked, because there was nowhere to explain it before they showed up.
 
-I led the project end-to-end.
+So the whole site is built around one idea: answer the questions people actually ask, in the order they ask them. What is this place, how does pricing work, what do you sell, where are you, when are you open, how do I reach you. Pricing gets the most weight of any page, because it's genuinely unusual — every item is tagged red, purple, blue, green, or yellow, priced from $9 down to $2, and prices drop the longer an item sits unsold. That's not a detail you can leave to word of mouth; it's the whole reason people come back weekly.
 
-Research
+Most traffic arrives from a Facebook link on a phone, so the site is mobile-first rather than mobile-adapted: large tap targets, the phone number one tap away, hours visible without scrolling. Rather than compete with the Facebook presence the business already had, the site links straight into it — Facebook page and Marketplace listings are both one click from the homepage, not funneled into a "contact us" form nobody would fill out.
 
-* Stakeholder interviews
-* Requirement gathering
-* Customer conversations
-* User research synthesis
+## What's in this repo
 
-Design
+**`src/`** — the React + Vite site. `App.jsx` is the entry point.
 
-* Information architecture
-* UX design
-* UI design
-* Responsive design
-* Wireframing
+**`docs/`** — the project writeup: business context, research and discovery, design decisions, launch outcomes, and the full case study.
 
-Development
+**`screenshots/`** — the screenshots used in this README.
 
-* Frontend development
-* Performance optimization
-* Deployment
-* Hosting management
+**`public/`, `dist/`** — static assets and the production build.
 
-Growth
+## Role I played
 
-* SEO implementation
-* Analytics setup
-* Ongoing maintenance
+End to end, solo: stakeholder interviews with the owner, customer conversations, information architecture, UX and UI design, responsive frontend development, deployment, SEO, and I'm still the one who maintains it.
 
-⸻
+## Tools
 
-Business Challenge
+React, Vite, Tailwind CSS, Framer Motion.
 
-The business relied heavily on Facebook, word-of-mouth referrals, and local awareness.
+## Run it locally
 
-Several challenges emerged during discovery:
+```
+npm install
+npm run dev
+```
 
-* Customers did not fully understand the pricing model.
-* Store information was spread across multiple channels.
-* New visitors lacked a clear understanding of available products.
-* Customers frequently contacted the business for basic information such as hours and location.
-* The business lacked a professional online presence.
+---
 
-⸻
-
-Research Insights
-
-Customer conversations and stakeholder interviews revealed several recurring needs.
-
-Pricing Clarity
-
-Customers wanted to quickly understand how the store’s pricing system worked.
-
-Product Visibility
-
-Customers wanted to know what product categories were available before visiting.
-
-Convenience
-
-Store hours, location, and contact information needed to be immediately accessible.
-
-Mobile Usage
-
-Many visitors arrived from social media platforms using mobile devices.
-
-⸻
-
-Solution
-
-The final website was designed around the questions customers asked most frequently.
-
-Key design decisions included:
-
-* Pricing-first information hierarchy
-* Mobile-first responsive design
-* Clear product category presentation
-* Integrated Facebook and Marketplace access
-* Embedded location and contact information
-* Strong call-to-action placement
-* Fast-loading React architecture
-
-⸻
-
-Outcomes
-
-Business Outcomes
-
-* Professional online presence established
-* Improved communication of store offerings
-* Stronger local credibility
-* Better customer access to business information
-
-Customer Outcomes
-
-* Easier understanding of pricing
-* Faster access to store information
-* Improved mobile experience
-* Better product discovery
-
-⸻
-
-Technologies
-
-* React
-* Vite
-* JavaScript
-* Tailwind CSS
-* Framer Motion
-* Lucide React
-
-⸻
-
-Documentation
-
-Detailed project documentation is available in the /docs folder.
-
-* Business Context
-* Research & Discovery
-* Design Decisions
-* Launch & Outcomes
-* Full UX Case Study
-
-⸻
-
-Screenshots
-
-(Add project screenshots here)
-
-⸻
-
-Live Website
-
-https://binsanddeals.com
-
-⸻
-
-Author
-
-Naveen Sereddy
-
-Portfolio Project Based On A Real Client Engagement
+Naveen Sereddy — [naveensereddy.com](https://naveensereddy.com) · [github.com/Naveen-Sereddy](https://github.com/Naveen-Sereddy)
