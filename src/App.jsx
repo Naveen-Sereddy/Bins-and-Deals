@@ -1,1225 +1,843 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import {
-  Phone, MapPin, Clock, Tag, ChevronDown, ChevronUp, Star, ArrowRight,
-  Shirt, Tv, Home, Gamepad2, Baby, Wrench, Sparkles, CreditCard, Banknote,
-  Menu, X,
+  Phone, MapPin, Clock, Tag, Star, ArrowRight, CreditCard, Banknote,
+  Tv, Shirt, Package, Gamepad2, ChevronDown, Store,
 } from 'lucide-react'
-import pricingPoster from './assets/pricing-poster.jpg'
-import clawMachineImg from './assets/claw-machine.jpg'
 
-const MINT = '#00E08A'
-const MINT_DEEP = '#00b873'
-const GOLD = '#FFB627'
-const DARK = '#08090c'
-const SURFACE_ALT = '#0d0f13'
-const SURFACE_DEEP = '#060709'
+import photoToys from './assets/cat-toys-games.jpg'
+import photoClothing from './assets/cat-clothing.jpg'
+import photoElectronics from './assets/cat-electronics.jpg'
+import photoClaw from './assets/claw-machine-real.jpg'
+import photoStorefront from './assets/storefront.jpg'
+import photoShoppingDay from './assets/store-shopping-day.jpg'
+import photoInterior from './assets/store-interior.jpg'
+import photoMysteryBoxes from './assets/cat-mystery-boxes.jpg'
 
-const CARD_BG = '#15171f'
-const CARD_BORDER = 'rgba(255,255,255,0.08)'
+/* ── Real business social links ── */
+const FB_PAGE_URL = 'https://www.facebook.com/xu.xiaoting.210987?mibextid=wwXIfr&rdid=amoDYGZMixHR0RaY&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1Ao34Qrcpi%2F%3Fmibextid%3DwwXIfr'
+const FB_MARKETPLACE_URL = 'https://www.facebook.com/profile.php?id=61570848458365&mibextid=wwXIfr&rdid=bAK8rjBwM6iqXPfa&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18VwrorqFD%2F%3Fmibextid%3DwwXIfr'
 
-// Reusable premium accents.
-const MINT_GRAD = `linear-gradient(135deg, ${MINT} 0%, ${MINT_DEEP} 100%)`
-const MINT_GLOW = '0 10px 30px -8px rgba(0,224,138,0.5)'
-// Layered depth + lit-from-above highlight — used across all cards for a consistent premium surface.
-const CARD_SHADOW = 'inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 2px rgba(0,0,0,0.5), 0 18px 44px -16px rgba(0,0,0,0.65)'
-const CARD_SHADOW_HOVER = 'inset 0 1px 0 rgba(255,255,255,0.07), 0 1px 2px rgba(0,0,0,0.5), 0 26px 50px -14px rgba(0,0,0,0.7), 0 0 34px -8px rgba(0,224,138,0.28)'
-// Shared lift-on-hover for grid cards.
-const CARD_HOVER = { y: -4, boxShadow: CARD_SHADOW_HOVER }
-
-const GRID_BG = {
-  backgroundImage:
-    'linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px), linear-gradient(to right, rgba(255,255,255,0.022) 1px, transparent 1px)',
-  backgroundSize: '56px 56px',
+/* lucide-react ships no brand marks (by design) — hand-drawn glyph for the Facebook "f" */
+function FacebookIcon({ size = 19 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+    </svg>
+  )
 }
 
-// Premium easing — soft, decisive settle (cubic-bezier "ease-out-quint").
-const EASE = [0.22, 1, 0.36, 1]
-const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } } }
-const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }
+/* ── Motion curves (mirrors CSS custom properties in index.css) ── */
+const EASE_OUT = [0.16, 1, 0.3, 1]
+const EASE_BOUNCE = [0.34, 1.56, 0.64, 1]
 
-function Reveal({ children, className = '' }) {
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE_OUT } },
+}
+const stagger = (delay = 0.08) => ({
+  hidden: {},
+  visible: { transition: { staggerChildren: delay } },
+})
+
+/* ── Scroll-reveal wrapper ── */
+function Reveal({ children, className = '', staggerDelay = 0.08, once = true, margin = '-60px' }) {
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-40px' })
+  const inView = useInView(ref, { once, margin })
   return (
-    <motion.div ref={ref} initial="hidden" animate={inView ? 'visible' : 'hidden'} variants={stagger} className={className}>
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
+      variants={stagger(staggerDelay)}
+      className={className}
+    >
       {children}
     </motion.div>
   )
 }
 
-// ─── BACK TO TOP ──────────────────────────────────────────────────────────────
-function BackToTop() {
-  const [visible, setVisible] = useState(false)
-  useEffect(() => {
-    const fn = () => setVisible(window.scrollY > 500)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
+/* ── Honest placeholder block — swap for real photography later ── */
+function Placeholder({ label, className = '', aspect = 'aspect-[4/3]' }) {
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.button
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.25 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="fixed bottom-8 right-6 z-40 w-11 h-11 rounded-full flex items-center justify-center transition-colors"
-          style={{ background: 'rgba(21,23,31,0.92)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px -6px rgba(0,0,0,0.6)' }}
-          aria-label="Back to top"
-        >
-          <ChevronUp size={18} color={MINT} />
-        </motion.button>
-      )}
-    </AnimatePresence>
-  )
-}
-
-// ─── NAVBAR ──────────────────────────────────────────────────────────────────
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
-
-  const links = [
-    { label: 'Pricing',      href: '#pricing' },
-    { label: 'About',        href: '#about' },
-    { label: 'What We Sell', href: '#products' },
-    { label: 'Find Us',      href: '#location' },
-    { label: 'Hours',        href: '#hours' },
-  ]
-
-  // Icon-only social button — recognizable glyph, glass surface, tooltip + aria-label for clarity.
-  const IconBtn = ({ href, label, children }) => (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      title={label}
-      aria-label={label}
-      className="flex items-center justify-center rounded-xl transition-all duration-200"
-      style={{ width: 40, height: 40, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)' }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.borderColor = 'rgba(0,224,138,0.5)'; e.currentTarget.style.background = 'rgba(0,224,138,0.08)' }}
-      onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
-    >
-      {children}
-    </a>
-  )
-  const fbIcon = (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="#4a9bff">
-      <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
-    </svg>
-  )
-  const mpIcon = (
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="#4a9bff" fillRule="evenodd" clipRule="evenodd">
-      {/* Scalloped storefront awning */}
-      <path d="M3 4h18v3q-2.25 1.4 -4.5 0q-2.25 1.4 -4.5 0q-2.25 1.4 -4.5 0q-2.25 1.4 -4.5 0z"/>
-      {/* Storefront body with open doorway */}
-      <path d="M5 8.5h14V19a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8.5zM10 20v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5h-4z"/>
-    </svg>
-  )
-  const socialBtns = (
-    <>
-      <IconBtn href="https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr" label="Facebook Page">{fbIcon}</IconBtn>
-      <IconBtn href="https://www.facebook.com/share/1Ao34Qrcpi/?mibextid=wwXIfr" label="Facebook Marketplace">{mpIcon}</IconBtn>
-    </>
-  )
-
-  return (
-    <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+    <div
+      role="img"
+      aria-label={`Placeholder image: ${label}`}
+      className={`${aspect} ${className} relative flex items-center justify-center overflow-hidden`}
       style={{
-        background: scrolled ? 'rgba(14,16,22,0.85)' : 'rgba(14,16,22,0.55)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : '1px solid rgba(255,255,255,0.03)',
-        boxShadow: scrolled ? '0 8px 32px -8px rgba(0,0,0,0.6)' : 'none',
+        background: 'repeating-linear-gradient(135deg, var(--border) 0px, var(--border) 10px, var(--paper) 10px, var(--paper) 20px)',
+        border: '2px dashed var(--muted)',
+        borderRadius: 'var(--radius-md)',
       }}
     >
-      <div className="max-w-7xl mx-auto pl-6 pr-4 sm:px-8 h-16" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
-        {/* Logo */}
-        <div style={{ justifySelf: 'start' }}>
-          <a
-            href="#hero"
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 900,
-              fontSize: 'clamp(1.1rem, 2.5vw, 1.35rem)',
-              color: '#00E08A',
-              letterSpacing: '0.05em',
-              textTransform: 'uppercase',
-              lineHeight: 1,
-            }}
-          >
-            BINS &amp; DEALS
-          </a>
-        </div>
-
-        {/* Nav links — centered */}
-        <div className="hidden lg:flex items-center gap-8" style={{ justifySelf: 'center' }}>
-          {links.map(l => (
-            <a
-              key={l.label}
-              href={l.href}
-              className="text-[0.72rem] font-semibold uppercase tracking-[0.13em] transition-colors"
-              style={{ color: '#9aa0ac' }}
-              onMouseEnter={e => e.target.style.color = '#ffffff'}
-              onMouseLeave={e => e.target.style.color = '#9aa0ac'}
-            >
-              {l.label}
-            </a>
-          ))}
-        </div>
-
-        {/* Right actions — desktop */}
-        <div className="hidden lg:flex items-center gap-2.5" style={{ justifySelf: 'end' }}>
-          {socialBtns}
-          <a
-            href="tel:8162224238"
-            className="flex items-center gap-2 px-5 rounded-xl text-xs font-bold transition-all duration-200"
-            style={{ height: 40, background: MINT_GRAD, color: '#04130c', boxShadow: `${MINT_GLOW}, inset 0 1px 0 rgba(255,255,255,0.2)` }}
-            onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-            onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-          >
-            <Phone size={14} strokeWidth={2.6} /> Call Us
-          </a>
-        </div>
-
-        {/* Right actions — mobile: social icons stay visible + hamburger */}
-        <div className="flex lg:hidden items-center gap-2" style={{ justifySelf: 'end', gridColumn: '3' }}>
-          {socialBtns}
-          <button
-            className="flex items-center justify-center rounded-xl transition-colors"
-            style={{ width: 40, height: 40, color: '#c5c9d4', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }}
-            onClick={() => setMenuOpen(v => !v)}
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22 }}
-            className="lg:hidden overflow-hidden"
-            style={{ background: 'rgba(14,16,22,0.98)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderTop: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 16px 32px -8px rgba(0,0,0,0.6)' }}
-          >
-            <div className="px-6 py-5 flex flex-col gap-4">
-              {links.map(l => (
-                <a
-                  key={l.label}
-                  href={l.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="text-sm font-semibold uppercase tracking-wider transition-colors"
-                  style={{ color: '#9aa0ac' }}
-                >
-                  {l.label}
-                </a>
-              ))}
-              <div className="flex flex-col gap-3 mt-1">
-                <a
-                  href="https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white"
-                  style={{ background: '#1877F2' }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                    <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
-                  </svg>
-                  Facebook Page
-                </a>
-                <a
-                  href="https://www.facebook.com/share/1Ao34Qrcpi/?mibextid=wwXIfr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white"
-                  style={{ background: '#1877F2' }}
-                >
-                  Facebook Marketplace
-                </a>
-                <a
-                  href="tel:8162224238"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold"
-                  style={{ background: MINT_GRAD, color: '#04130c', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)' }}
-                >
-                  <Phone size={15} strokeWidth={2.6} /> (816) 222-4238
-                </a>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
-  )
-}
-
-// ─── HERO ────────────────────────────────────────────────────────────────────
-const BADGES = ['New stock every week', 'Thousands of items', 'In-store treasure hunt']
-
-const TICKER_TEXT = '  New inventory weekly  ·  Limited time deals  ·  First come, first served  ·  Prices from $2  ·  In-store only  ·  '
-
-function Hero() {
-  return (
-    <section
-      id="hero"
-      className="min-h-screen flex flex-col relative overflow-hidden"
-      style={{ background: DARK, paddingTop: '64px', ...GRID_BG }}
-    >
-      {/* ── Background depth layers ── */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 85% 60% at 50% 42%, rgba(0,224,138,0.10) 0%, transparent 68%)' }} />
-      <div className="absolute pointer-events-none" style={{ width: 680, height: 680, top: '-16%', left: '-12%', background: 'radial-gradient(circle, rgba(230,168,0,0.07) 0%, transparent 70%)' }} />
-      <div className="absolute pointer-events-none" style={{ width: 560, height: 560, bottom: '2%', right: '-10%', background: 'radial-gradient(circle, rgba(0,224,138,0.07) 0%, transparent 70%)' }} />
-      {/* Top vignette for navbar legibility */}
-      <div className="absolute inset-x-0 top-0 h-40 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35), transparent)' }} />
-
-      {/* ── Main content ── */}
-      <div className="flex-1 flex flex-col items-center justify-center relative z-20 w-full py-8 sm:py-12 px-5 sm:px-8">
-
-          {/* Trust badge pills */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-2 mb-4 mt-[-10px]"
-          >
-            {BADGES.map(b => (
-              <span
-                key={b}
-                className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] px-3.5 py-1.5 rounded-full"
-                style={{ background: 'rgba(255,255,255,0.04)', color: '#9aa0ac', border: '1px solid rgba(255,255,255,0.08)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05)' }}
-              >
-                <span className="w-1 h-1 rounded-full" style={{ background: MINT }} />
-                {b}
-              </span>
-            ))}
-          </motion.div>
-
-          {/* Store name */}
-          <motion.h1
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.08, duration: 0.55 }}
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 900,
-              fontSize: 'clamp(1.8rem, 9vw, 8rem)',
-              lineHeight: 0.88,
-              letterSpacing: '0.03em',
-              textTransform: 'uppercase',
-              textAlign: 'center',
-              display: 'block',
-              color: '#00E08A',
-              WebkitTextStroke: '1px rgba(255,255,255,0.06)',
-              marginBottom: '0.35em',
-            }}
-          >
-            BINS &amp; DEALS
-          </motion.h1>
-
-          {/* Tagline */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.18, duration: 0.45 }}
-            className="font-black uppercase tracking-wide mb-5 text-center"
-            style={{ color: '#ffffff', fontSize: 'clamp(1rem, 3.2vw, 2rem)', letterSpacing: '0.06em' }}
-          >
-            Dig In. Find Crazy Deals.
-          </motion.p>
-
-          {/* Sub-description */}
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.26, duration: 0.45 }}
-            className="text-base sm:text-lg mb-5 max-w-md text-center leading-relaxed"
-            style={{ color: '#9aa0ac' }}
-          >
-            New, refurbished &amp; overstock items priced from <strong style={{ color: '#ffffff' }}>$2</strong>, right here in Liberty, MO.
-          </motion.p>
-
-          {/* Urgency callout */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.93 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.33, duration: 0.4 }}
-            className="mb-8 flex justify-center w-full"
-          >
-            <div
-              className="rounded-xl"
-              style={{
-                display: 'inline-flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                textAlign: 'center',
-                padding: '12px 18px',
-                maxWidth: '95%',
-                margin: '0 auto',
-                width: 'fit-content',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
-              }}
-            >
-              <span style={{ color: '#dde0e6', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.09em', textTransform: 'uppercase', textAlign: 'center' }}>
-                <span style={{ color: GOLD }}>⚡</span>&nbsp; Prices from <span style={{ color: GOLD }}>$2</span> &nbsp;·&nbsp; New stock weekly &nbsp;·&nbsp; First come, first served
-              </span>
-            </div>
-          </motion.div>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.45 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
-          >
-            <a
-              href="#products"
-              className="flex items-center gap-2.5 font-black px-9 py-4 rounded-xl text-base transition-opacity hover:opacity-90"
-              style={{
-                background: 'linear-gradient(135deg, #00E08A 0%, #00b873 100%)',
-                color: '#ffffff',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Start Digging <ArrowRight size={18} strokeWidth={2.8} />
-            </a>
-            <a
-              href="tel:8162224238"
-              className="flex items-center gap-2.5 font-bold px-8 py-4 rounded-xl text-base transition-opacity hover:opacity-85"
-              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)', color: '#e2e4e8' }}
-            >
-              <Phone size={17} color={MINT} strokeWidth={2.5} />
-              (816) 222-4238
-            </a>
-          </motion.div>
-
-          {/* Hours */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.52 }}
-            className="flex items-center justify-center gap-2 text-sm"
-            style={{ color: '#9aa0ac' }}
-          >
-            <Clock size={13} color={MINT} />
-            Mon-Sat 10AM-8PM &nbsp;·&nbsp; Sun 11AM-7PM
-          </motion.div>
-      </div>
-
-      {/* ── Scrolling ticker ── */}
-      <div
-        className="relative z-20 overflow-hidden py-2.5"
-        style={{ background: 'rgba(0,224,138,0.1)', borderTop: '1px solid rgba(0,224,138,0.2)' }}
-      >
-        <motion.div
-          className="flex whitespace-nowrap"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
-        >
-          {[...Array(4)].map((_, i) => (
-            <span
-              key={i}
-              className="text-[11px] font-bold uppercase tracking-[0.1em]"
-              style={{ color: MINT }}
-            >
-              {TICKER_TEXT}
-            </span>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* Scroll caret */}
-      <div className="absolute bottom-14 left-1/2 -translate-x-1/2 z-20">
-        <motion.div animate={{ y: [0, 7, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}>
-          <ChevronDown size={22} color="rgba(0,224,138,0.45)" />
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-// ─── TREASURE HUNT PRICING ───────────────────────────────────────────────────
-function TreasureHunt() {
-  const tags = [
-    { color: '#E53935', label: 'Red Tag',    price: '$9' },
-    { color: '#8E24AA', label: 'Purple Tag', price: '$7' },
-    { color: '#1E88E5', label: 'Blue Tag',   price: '$5' },
-    { color: '#43A047', label: 'Green Tag',  price: '$3' },
-    { color: '#F9A825', label: 'Yellow Tag', price: '$2' },
-  ]
-
-  return (
-    <section id="pricing" className="py-20 sm:py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            Pricing System
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight mb-4"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            TREASURE HUNT SAVINGS
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-base max-w-lg mx-auto leading-relaxed" style={{ color: '#9aa0ac' }}>
-            Every item is color-tagged for easy pricing. No guessing, no haggling.
-          </motion.p>
-        </Reveal>
-
-        <div className="flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8">
-          <Reveal className="w-full lg:w-1/2 order-2 lg:order-1">
-            <div className="flex flex-col gap-3" id="pricing-cards">
-              {tags.map(({ color, label, price }) => (
-                <motion.div
-                  key={label}
-                  variants={fadeUp}
-                  className="flex items-center gap-4 rounded-xl px-5 py-4"
-                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-                >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: color }}
-                  >
-                    <Tag size={18} color="white" strokeWidth={2} />
-                  </div>
-                  <span className="flex-1 font-bold text-base" style={{ color: '#e2e4e8' }}>{label}</span>
-                  <span
-                    className="font-black text-2xl"
-                    style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-                  >
-                    {price}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </Reveal>
-
-          {/* Poster — on desktop scaled to the tag-stack height (Red→Yellow), aspect ratio kept */}
-          <Reveal className="w-full sm:max-w-sm lg:max-w-none lg:w-1/2 order-1 lg:order-2 flex justify-center lg:relative">
-            <motion.div
-              variants={fadeUp}
-              className="w-full sm:max-w-sm lg:absolute lg:inset-0 lg:w-auto lg:max-w-none flex items-center justify-center"
-            >
-              <img
-                src={pricingPoster}
-                alt="Treasure Hunt Pricing System"
-                className="w-full h-auto object-contain block rounded-xl lg:w-auto lg:h-full"
-                style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-              />
-            </motion.div>
-          </Reveal>
-        </div>
-
-        <Reveal className="mt-5">
-          <motion.p variants={fadeUp} className="text-xs text-center" style={{ color: '#868d99' }}>
-            Prices drop daily. The earlier you shop, the more you save.
-          </motion.p>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-// ─── MORE WAYS TO SAVE ───────────────────────────────────────────────────────
-function ShelfDeals() {
-  const features = [
-    { icon: Tag,      label: 'Individually Priced',    desc: 'Every shelf item is clearly marked — no surprise costs at checkout.' },
-    { icon: Star,     label: 'Up to 50% Off Amazon',   desc: 'Shelf items typically priced 40-50% below Amazon retail.' },
-    { icon: ArrowRight, label: 'New Items Regularly',  desc: 'Fresh shelf stock added alongside our bin rotation every week.' },
-  ]
-
-  return (
-    <section id="shelf-deals" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
-      <div className="max-w-5xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            Shelf Deals
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5rem)] font-black leading-tight mb-4"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            MORE WAYS TO SAVE
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-base max-w-2xl mx-auto leading-relaxed" style={{ color: '#9aa0ac' }}>
-            In addition to our bin pricing system, we also offer shelf items throughout the store. Each item is individually priced and typically 40-50% lower than Amazon prices, giving you even more ways to save on quality products.
-          </motion.p>
-        </Reveal>
-
-        <Reveal>
-          <div className="grid sm:grid-cols-3 gap-5">
-            {features.map(({ icon: Icon, label, desc }) => (
-              <motion.div
-                key={label}
-                variants={fadeUp}
-                whileHover={CARD_HOVER}
-                className="rounded-xl p-6 text-center"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-              >
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 mx-auto"
-                  style={{ background: 'rgba(0,224,138,0.12)', border: '1px solid rgba(0,224,138,0.2)' }}
-                >
-                  <Icon size={19} color={MINT} />
-                </div>
-                <h3 className="font-black text-sm mb-2" style={{ color: '#ffffff' }}>{label}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#9aa0ac' }}>{desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-// ─── CLAW MACHINE ────────────────────────────────────────────────────────────
-function ClawMachine() {
-  return (
-    <section id="claw-machine" className="py-16 sm:py-20 relative flex items-center" style={{ background: SURFACE_ALT, ...GRID_BG }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 w-full">
-        <Reveal className="text-center mb-6">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            In-Store Fun
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2rem,5vw,4rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            CLAW MACHINE
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-sm mt-2" style={{ color: '#9aa0ac' }}>
-            Fun for the whole family!
-          </motion.p>
-        </Reveal>
-
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-10">
-          <Reveal className="flex justify-center shrink-0">
-            <motion.div
-              variants={fadeUp}
-              className="rounded-xl overflow-hidden"
-              style={{ border: `1px solid ${CARD_BORDER}`, background: CARD_BG, boxShadow: CARD_SHADOW }}
-            >
-              <img
-                src={clawMachineImg}
-                alt="Claw Machine at Bins and Deals"
-                className="max-h-[320px] lg:max-h-[500px] w-auto object-contain block"
-              />
-            </motion.div>
-          </Reveal>
-
-          <Reveal className="w-full lg:max-w-lg">
-            <div className="flex flex-col gap-5">
-              <motion.p variants={fadeUp} className="text-base leading-relaxed" style={{ color: '#9aa0ac' }}>
-                We have an exciting claw machine right inside our store! Perfect for kids and adults alike. Try your luck and win amazing prizes!
-              </motion.p>
-
-              <motion.div
-                variants={fadeUp}
-                className="inline-flex items-center gap-3 rounded-xl px-5 py-3.5 self-start"
-                style={{ background: 'rgba(0,224,138,0.1)', border: '1px solid rgba(0,224,138,0.25)' }}
-              >
-                <span className="text-lg font-black" style={{ color: '#ffffff' }}>🪙 $1 = 4 Tokens</span>
-                <span className="text-sm font-semibold" style={{ color: MINT }}>Play &amp; Win!</span>
-              </motion.div>
-
-              <motion.p variants={fadeUp} className="text-sm leading-relaxed" style={{ color: '#9aa0ac' }}>
-                While you shop, let the kids play! Hours of fun waiting for you at Bins &amp; Deals.
-              </motion.p>
-
-              <motion.a
-                variants={fadeUp}
-                href="#location"
-                className="self-start flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-white text-sm transition-opacity hover:opacity-85"
-                style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
-              >
-                <MapPin size={15} strokeWidth={2.5} /> Come Visit Us
-              </motion.a>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── ABOUT ───────────────────────────────────────────────────────────────────
-function About() {
-  const stats = [
-    { display: '1000s+', label: 'Items In Stock' },
-    { display: '40-50%', label: 'Off Retail Prices' },
-    { display: '8',      label: 'Categories' },
-    { display: '7',      label: 'Days a Week' },
-  ]
-
-  return (
-    <section id="about" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            About Us
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2.8rem,6vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            YOUR LOCAL DEAL DESTINATION
-          </motion.h2>
-        </Reveal>
-
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
-          <Reveal>
-            <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-4" style={{ color: '#9aa0ac' }}>
-              At <strong style={{ color: '#ffffff' }}>Bins and Deals</strong>, we believe everyone deserves access to quality products without breaking the bank. Our store is packed with{' '}
-              <strong style={{ color: '#00E08A' }}>new, refurbished, and gently used items</strong> across every category, all priced far below retail.
-            </motion.p>
-            <motion.p variants={fadeUp} className="text-lg leading-relaxed mb-8" style={{ color: '#9aa0ac' }}>
-              Whether you're hunting for electronics, home goods, clothing, or toys, you'll always find something worth grabbing at a price you won't believe. Deals change constantly, so every visit is a new adventure.
-            </motion.p>
-            <motion.a
-              variants={fadeUp}
-              href="tel:8162224238"
-              className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-white text-sm transition-opacity hover:opacity-85"
-              style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
-            >
-              <Phone size={15} strokeWidth={2.5} /> Call Us Today
-            </motion.a>
-          </Reveal>
-
-          <Reveal>
-            <div className="grid grid-cols-2 gap-4">
-              {stats.map(s => (
-                <motion.div
-                  key={s.label}
-                  variants={fadeUp}
-                  whileHover={CARD_HOVER}
-                  className="rounded-xl p-7 text-center"
-                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-                >
-                  <div
-                    className="text-[clamp(2.2rem,5vw,3rem)] font-black leading-none mb-2"
-                    style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      backgroundImage: 'linear-gradient(135deg, #00E08A 0%, #FFB627 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    {s.display}
-                  </div>
-                  <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#868d99' }}>{s.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── PRODUCTS ────────────────────────────────────────────────────────────────
-function Products() {
-  const categories = [
-    { icon: Tv,       label: 'Electronics',            desc: 'TVs, tablets, phones, gaming gear & more' },
-    { icon: Shirt,    label: 'Clothing & Apparel',     desc: 'Brand-name clothing for the whole family' },
-    { icon: Gamepad2, label: 'Toys & Games',           desc: 'Board games, action figures, outdoor play' },
-    { icon: Home,     label: 'Home & Kitchen',         desc: 'Appliances, décor, cookware & furniture' },
-    { icon: Wrench,   label: 'Tools & Hardware',       desc: 'Hand tools, power tools & hardware supplies' },
-    { icon: Sparkles, label: 'Beauty & Personal Care', desc: 'Skincare, hair care, grooming & wellness' },
-    { icon: Baby,     label: 'Baby & Kids',            desc: 'Gear, clothing, toys & nursery essentials' },
-  ]
-
-  return (
-    <section id="products" className="py-20 sm:py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            What We Sell
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(3rem,8vw,6.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            SOMETHING FOR EVERYONE
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-base max-w-lg mx-auto mt-4" style={{ color: '#9aa0ac' }}>
-            Thousands of items across every category: new, refurbished, and used. All at prices that make you do a double-take.
-          </motion.p>
-        </Reveal>
-
-        <Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {categories.map(({ icon: Icon, label, desc }) => (
-              <motion.div
-                key={label}
-                variants={fadeUp}
-                whileHover={CARD_HOVER}
-                className="rounded-xl p-6"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-              >
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                  style={{ background: 'rgba(0,224,138,0.12)', border: '1px solid rgba(0,224,138,0.2)' }}
-                >
-                  <Icon size={20} color={MINT} />
-                </div>
-                <h3 className="font-bold text-sm mb-1.5 leading-tight" style={{ color: '#ffffff' }}>{label}</h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#9aa0ac' }}>{desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
-
-        <Reveal className="mt-12">
-          <motion.div
-            variants={fadeUp}
-            className="rounded-xl p-10 sm:p-14 text-center"
-            style={{ background: 'linear-gradient(135deg, #00E08A 0%, #008f5a 100%)' }}
-          >
-            <div className="flex justify-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => <Star key={i} size={16} color="#FFB627" fill="#FFB627" />)}
-            </div>
-            <h3
-              className="text-[clamp(2rem,5vw,4rem)] font-black text-white leading-none mb-3"
-              style={{ fontFamily: "'Bricolage Grotesque', sans-serif" }}
-            >
-              NEW INVENTORY EVERY WEEK
-            </h3>
-            <p className="text-white/70 text-base mb-7 max-w-md mx-auto">
-              Deals change constantly. Stop in often or give us a call to hear about our latest arrivals.
-            </p>
-            <a
-              href="tel:8162224238"
-              className="inline-flex items-center gap-2 font-bold px-8 py-3.5 rounded-xl text-white text-sm transition-opacity hover:opacity-85"
-              style={{ background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.2)' }}
-            >
-              <Phone size={15} strokeWidth={2.5} /> (816) 222-4238
-            </a>
-          </motion.div>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-// ─── FIND US ONLINE ──────────────────────────────────────────────────────────
-function FindUsOnline() {
-  const cards = [
-    {
-      label: 'Follow Us on Facebook',
-      sub: 'Stay updated with our latest arrivals, store news, and exclusive deals. Join our community!',
-      btnText: 'Visit Our Facebook Page',
-      href: 'https://www.facebook.com/share/18VwrorqFD/?mibextid=wwXIfr',
-      badgeLabel: 'Facebook',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-          <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
-        </svg>
-      ),
-    },
-    {
-      label: 'Shop on Facebook Marketplace',
-      sub: 'Browse our product listings at prices cheaper than Amazon. New items added regularly!',
-      btnText: 'Browse Our Listings',
-      href: 'https://www.facebook.com/share/1Ao34Qrcpi/?mibextid=wwXIfr',
-      badgeLabel: 'Marketplace',
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-          <path d="M21 3H3a1 1 0 0 0-1 1v2.5a2.5 2.5 0 0 0 2 2.45V19a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8.95A2.5 2.5 0 0 0 22 6.5V4a1 1 0 0 0-1-1zm-9 15H9v-5h3v5zm4 0h-3v-5h3v5zm2-8H6V8.95A2.5 2.5 0 0 0 8.5 9h7A2.5 2.5 0 0 0 18 8.95V10zM4 6.5V5h16v1.5a1.5 1.5 0 0 1-3 0 1 1 0 0 0-2 0 1.5 1.5 0 0 1-3 0 1 1 0 0 0-2 0 1.5 1.5 0 0 1-3 0z"/>
-        </svg>
-      ),
-    },
-  ]
-
-  return (
-    <section id="connect" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
-      <div className="max-w-5xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            Connect With Us
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            FIND US ONLINE
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-base mt-4" style={{ color: '#9aa0ac' }}>
-            Follow along, shop smart, save big!
-          </motion.p>
-        </Reveal>
-
-        <Reveal>
-          <div className="grid sm:grid-cols-2 gap-6">
-            {cards.map(({ label, sub, btnText, href, icon, badgeLabel }) => (
-              <motion.div
-                key={label}
-                variants={fadeUp}
-                whileHover={CARD_HOVER}
-                className="flex flex-col rounded-xl p-8"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-              >
-                <div className="flex items-center gap-3 mb-5">
-                  <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: '#1877F2' }}
-                  >
-                    {icon}
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#1877F2' }}>{badgeLabel}</span>
-                </div>
-                <h3 className="font-black text-lg mb-2 leading-tight" style={{ color: '#ffffff' }}>{label}</h3>
-                <p className="text-sm leading-relaxed mb-6 flex-1" style={{ color: '#9aa0ac' }}>{sub}</p>
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 font-bold text-white text-sm py-3.5 rounded-xl transition-opacity hover:opacity-85"
-                  style={{ background: '#1877F2' }}
-                >
-                  {btnText} <ArrowRight size={14} strokeWidth={2.5} />
-                </a>
-              </motion.div>
-            ))}
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-// ─── LOCATION ────────────────────────────────────────────────────────────────
-function Location() {
-  const info = [
-    {
-      icon: MapPin,
-      title: '892 Rte 291',
-      sub: 'Liberty, MO 64068',
-      detail: 'Next to Dollar Tree and Price Chopper',
-      link: { text: 'Open in Google Maps ↗', href: 'https://maps.google.com/?q=892+Rte+291+Liberty+MO+64068' },
-    },
-    {
-      icon: Phone,
-      title: '(816) 222-4238',
-      sub: 'Give us a call anytime',
-      link: { text: 'Call Now', href: 'tel:8162224238' },
-    },
-    {
-      icon: Clock,
-      title: 'Mon-Sat: 10AM-8PM',
-      sub: 'Sunday: 11AM-7PM',
-      detail: 'Open 7 days a week',
-    },
-  ]
-
-  return (
-    <section id="location" className="py-20 sm:py-24 relative" style={{ background: SURFACE_ALT, ...GRID_BG }}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            Find Us
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            VISIT OUR STORE
-          </motion.h2>
-        </Reveal>
-
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
-          <Reveal>
-            <div className="flex flex-col gap-4">
-              {info.map(({ icon: Icon, title, sub, detail, link }, i) => (
-                <motion.div
-                  key={i}
-                  variants={fadeUp}
-                  className="flex gap-4 rounded-xl p-5"
-                  style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ background: 'rgba(0,224,138,0.12)', border: '1px solid rgba(0,224,138,0.2)' }}
-                  >
-                    <Icon size={17} color={MINT} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-base leading-tight mb-0.5" style={{ color: '#ffffff' }}>{title}</p>
-                    <p className="text-sm" style={{ color: '#9aa0ac' }}>{sub}</p>
-                    {detail && <p className="text-xs mt-0.5" style={{ color: '#868d99' }}>{detail}</p>}
-                    {link && (
-                      <a
-                        href={link.href}
-                        target={link.href.startsWith('http') ? '_blank' : undefined}
-                        rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                        className="inline-flex items-center gap-1 text-xs font-bold mt-2 hover:underline"
-                        style={{ color: MINT }}
-                      >
-                        {link.text}
-                      </a>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-              <motion.a
-                variants={fadeUp}
-                href="tel:8162224238"
-                className="inline-flex items-center gap-2 font-bold px-7 py-3.5 rounded-xl text-white text-sm transition-opacity hover:opacity-85 mt-2"
-                style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
-              >
-                <Phone size={15} strokeWidth={2.5} /> Call Us Now
-              </motion.a>
-            </div>
-          </Reveal>
-
-          <Reveal>
-            <motion.div
-              variants={fadeUp}
-              className="rounded-xl overflow-hidden"
-              style={{ height: '460px', border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW }}
-            >
-              <iframe
-                title="Bins and Deals Location"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="no-referrer-when-downgrade"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3097.3277858083065!2d-94.40294768428955!3d39.24631547941235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87c0f4b5b7d0a3d1%3A0x5f9a3b1f2c3d4e5f!2s892+MO-291+S%2C+Liberty%2C+MO+64068!5e0!3m2!1sen!2sus!4v1713000000000!5m2!1sen!2sus"
-              />
-            </motion.div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── HOURS ───────────────────────────────────────────────────────────────────
-function Hours() {
-  const days = [
-    { day: 'Monday',    hours: '10:00 AM - 8:00 PM' },
-    { day: 'Tuesday',   hours: '10:00 AM - 8:00 PM' },
-    { day: 'Wednesday', hours: '10:00 AM - 8:00 PM' },
-    { day: 'Thursday',  hours: '10:00 AM - 8:00 PM' },
-    { day: 'Friday',    hours: '10:00 AM - 8:00 PM' },
-    { day: 'Saturday',  hours: '10:00 AM - 8:00 PM' },
-    { day: 'Sunday',    hours: '11:00 AM - 7:00 PM' },
-  ]
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
-
-  return (
-    <section id="hours" className="py-20 sm:py-24 relative" style={{ background: DARK, ...GRID_BG }}>
-      <div className="max-w-2xl mx-auto px-5 sm:px-8">
-        <Reveal className="text-center mb-10">
-          <motion.p variants={fadeUp} className="text-xs font-bold uppercase tracking-[0.2em] mb-3" style={{ color: MINT }}>
-            Store Hours
-          </motion.p>
-          <motion.h2
-            variants={fadeUp}
-            className="text-[clamp(2.5rem,7vw,5.5rem)] font-black leading-tight"
-            style={{ fontFamily: "'Bricolage Grotesque', sans-serif", color: '#ffffff' }}
-          >
-            COME SEE US
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-base mt-4" style={{ color: '#9aa0ac' }}>
-            Open 7 days a week. Deals don't take days off.
-          </motion.p>
-        </Reveal>
-
-        <Reveal>
-          <motion.div
-            variants={fadeUp}
-            className="rounded-xl overflow-hidden"
-            style={{ border: `1px solid ${CARD_BORDER}`, boxShadow: CARD_SHADOW, overflow: 'hidden', borderRadius: '0.75rem' }}
-          >
-            <div className="px-6 py-4" style={{ background: `linear-gradient(135deg, ${MINT} 0%, #008f5a 100%)` }}>
-              <div className="flex items-center gap-3">
-                <Clock size={17} color="rgba(255,255,255,0.85)" />
-                <span className="text-white font-black text-sm uppercase tracking-widest">Weekly Schedule</span>
-              </div>
-            </div>
-            <div style={{ background: CARD_BG }}>
-              {days.map(({ day, hours }, idx) => {
-                const isToday = day === today
-                return (
-                  <div
-                    key={day}
-                    className="flex items-center justify-between px-6 py-3.5"
-                    style={{
-                      ...(isToday ? { background: 'rgba(0,224,138,0.1)' } : {}),
-                      borderBottom: idx < days.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      {isToday && (
-                        <span
-                          className="text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide"
-                          style={{ background: 'rgba(0,224,138,0.2)', color: MINT }}
-                        >
-                          Today
-                        </span>
-                      )}
-                      <span className="font-semibold text-sm" style={{ color: isToday ? '#ffffff' : '#9aa0ac' }}>{day}</span>
-                    </div>
-                    <span className="font-semibold text-sm tabular-nums" style={{ color: isToday ? '#ffffff' : '#868d99' }}>
-                      {hours}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-            <div
-              className="px-6 py-3.5 flex items-center justify-between"
-              style={{ background: 'rgba(0,0,0,0.25)', borderTop: `1px solid ${CARD_BORDER}` }}
-            >
-              <p className="text-xs" style={{ color: '#868d99' }}>Holiday hours may vary</p>
-              <a href="tel:8162224238" className="flex items-center gap-1.5 text-xs font-bold hover:underline" style={{ color: MINT }}>
-                <Phone size={11} strokeWidth={2.5} /> Call to confirm
-              </a>
-            </div>
-          </motion.div>
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-// ─── PAYMENT METHODS ──────────────────────────────────────────────────────────
-function PaymentMethods() {
-  const methods = [
-    { icon: <Banknote size={20} color={MINT} />, label: 'Cash' },
-    { icon: <CreditCard size={20} color={MINT} />, label: 'Credit & Debit' },
-    {
-      icon: (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-        </svg>
-      ),
-      label: 'Apple Pay',
-    },
-  ]
-
-  return (
-    <div className="py-8 px-5 sm:px-8" style={{ background: SURFACE_DEEP, borderTop: `1px solid ${CARD_BORDER}`, ...GRID_BG }}>
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-        <p className="text-xs font-bold uppercase tracking-widest shrink-0" style={{ color: '#868d99' }}>We Accept</p>
-        <div className="w-px h-4 hidden sm:block" style={{ background: 'rgba(255,255,255,0.1)' }} />
-        <div className="flex items-center gap-8 flex-wrap justify-center">
-          {methods.map(({ icon, label }) => (
-            <div key={label} className="flex items-center gap-2.5">
-              <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center"
-                style={{ background: CARD_BG, border: `1px solid ${CARD_BORDER}` }}
-              >
-                {icon}
-              </div>
-              <span className="text-sm font-semibold" style={{ color: '#9aa0ac' }}>{label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      <span className="mono text-[0.7rem] sm:text-[0.75rem] font-semibold uppercase tracking-wide text-center px-3 py-1.5 rounded" style={{ background: 'var(--paper)', color: 'var(--muted)', border: '1px solid var(--border)' }}>
+        Photo: {label}
+      </span>
     </div>
   )
 }
 
-// ─── FOOTER ──────────────────────────────────────────────────────────────────
-function Footer() {
+/* ── Tag glyph icon (logo mark) ── */
+function TagIcon({ size = 28 }) {
   return (
-    <footer
-      className="py-8 px-5 sm:px-8"
-      style={{ background: SURFACE_DEEP, borderTop: `1px solid ${CARD_BORDER}`, ...GRID_BG }}
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <path d="M4 4h12l12 12-12 12L4 16V4z" fill="var(--yellow)" stroke="var(--ink)" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="10" cy="10" r="2.5" fill="var(--paper)" stroke="var(--ink)" strokeWidth="2" />
+    </svg>
+  )
+}
+
+/* ══════════════════════════════════════════ NAV ══════════════════════════════════════════ */
+function Nav() {
+  const links = [
+    { label: 'Tags', href: '#tags' },
+    { label: 'Shelf Deals', href: '#shelf' },
+    { label: 'Categories', href: '#categories' },
+    { label: 'Claw Machine', href: '#claw' },
+    { label: 'Visit', href: '#visit' },
+  ]
+  return (
+    <nav
+      className="sticky top-0 z-50"
+      style={{ background: 'var(--paper)', borderBottom: '3px solid var(--ink)' }}
+      aria-label="Primary"
     >
-      <div className="max-w-7xl mx-auto">
-        <div className="grid sm:grid-cols-3 gap-10 pb-10" style={{ borderBottom: `1px solid ${CARD_BORDER}` }}>
-          <div>
-            <h3 className="text-xl font-black mb-3" style={{ fontFamily: "'Poppins', sans-serif", color: '#ffffff' }}>
-              BINS & DEALS
-            </h3>
-            <p className="text-sm leading-relaxed" style={{ color: '#868d99' }}>
-              Your local discount store for new, refurbished, and used products at unbeatable prices in Liberty, MO.
-            </p>
-          </div>
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#868d99' }}>Store Hours</h4>
-            <div className="space-y-2 text-sm">
-              <p style={{ color: '#868d99' }}><span style={{ color: '#c5c9d4', fontWeight: 600 }}>Mon-Sat:</span> 10:00 AM - 8:00 PM</p>
-              <p style={{ color: '#868d99' }}><span style={{ color: '#c5c9d4', fontWeight: 600 }}>Sunday:</span> 11:00 AM - 7:00 PM</p>
-            </div>
-          </div>
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: '#868d99' }}>Contact & Location</h4>
-            <div className="space-y-3 text-sm" style={{ color: '#868d99' }}>
-              <p className="flex items-start gap-2.5">
-                <MapPin size={14} color={MINT} className="mt-0.5 shrink-0" />
-                892 Rte 291, Liberty, MO 64068
-              </p>
-              <a href="tel:8162224238" className="flex items-center gap-2.5 transition-colors" style={{ color: '#868d99' }}>
-                <Phone size={14} color={MINT} className="shrink-0" />
-                (816) 222-4238
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-8" style={{ height: 72 }}>
+        <a href="#top" className="flex items-center gap-2.5 shrink-0">
+          <TagIcon size={30} />
+          <span className="display text-lg sm:text-xl leading-none" style={{ color: 'var(--ink)' }}>
+            Bins &amp; Deals
+          </span>
+        </a>
+
+        <ul className="nav-links-desktop items-center gap-7 list-none m-0 p-0">
+          {links.map((l) => (
+            <li key={l.label}>
+              <a href={l.href} className="nav-link mono text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--ink)' }}>
+                {l.label}
               </a>
+            </li>
+          ))}
+          <li className="flex items-center gap-3" style={{ borderLeft: '2px solid var(--border)', paddingLeft: 'var(--space-4)' }}>
+            <a href={FB_PAGE_URL} target="_blank" rel="noopener noreferrer" aria-label="Bins & Deals on Facebook" className="nav-social-icon" style={{ color: 'var(--ink)' }}>
+              <FacebookIcon size={18} />
+            </a>
+            <a href={FB_MARKETPLACE_URL} target="_blank" rel="noopener noreferrer" aria-label="Bins & Deals on Facebook Marketplace" className="nav-social-icon" style={{ color: 'var(--ink)' }}>
+              <Store size={18} strokeWidth={2.25} />
+            </a>
+          </li>
+        </ul>
+
+        <a
+          href="tel:8162224238"
+          aria-label="Call (816) 222-4238"
+          className="btn-press mono text-xs sm:text-sm font-bold uppercase tracking-wide rounded-[var(--radius-sm)]"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            flexShrink: 0,
+            width: 'auto',
+            padding: '12px 16px',
+            background: 'var(--yellow)',
+            color: 'var(--ink)',
+            border: '2.5px solid var(--ink)',
+            boxShadow: 'var(--block-shadow-sm)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Phone size={16} strokeWidth={2.75} style={{ flexShrink: 0 }} />
+          <span className="nav-call-full">(816) 222-4238</span>
+          <span className="nav-call-short" aria-hidden="true">Call</span>
+        </a>
+      </div>
+    </nav>
+  )
+}
+
+/* ══════════════════════════════════════════ HERO ══════════════════════════════════════════ */
+function Hero() {
+  return (
+    <header id="top" className="relative overflow-hidden" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 sm:py-20 grid hero-grid gap-10 lg:gap-16 items-center">
+        <motion.div initial="hidden" animate="visible" variants={stagger(0.12)} className="max-w-xl">
+          <motion.p
+            variants={fadeUp}
+            className="mono inline-flex items-center gap-2 text-xs sm:text-sm font-bold uppercase tracking-widest px-3 py-1.5 mb-5 rounded-full"
+            style={{ background: '#A9D43D', color: 'var(--ink)', border: '2px solid var(--ink)' }}
+          >
+            <Star size={13} fill="var(--ink)" /> Now open · 7 days a week
+          </motion.p>
+
+          <motion.h1 variants={fadeUp} className="display text-[clamp(2.6rem,7vw,5.2rem)] mb-5" style={{ color: 'var(--ink)' }}>
+            DIG IN.
+            <br />
+            FIND{' '}
+            <span
+              style={{
+                WebkitTextStroke: '2.5px var(--red)',
+                color: 'transparent',
+              }}
+            >
+              CRAZY
+            </span>
+            <br />
+            DEALS.
+          </motion.h1>
+
+          <motion.p variants={fadeUp} className="text-base sm:text-lg leading-relaxed mb-7" style={{ color: 'var(--muted)', maxWidth: '38ch' }}>
+            Liquidation finds, crazy low prices, and new stock all the time. Zero guessing. First come, first served.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="flex flex-wrap gap-3 mb-9">
+            <a
+              href="#tags"
+              className="btn-press inline-flex items-center gap-2 display text-sm sm:text-base px-6 py-4 rounded-[var(--radius-sm)]"
+              style={{ background: 'var(--yellow)', color: 'var(--ink)', border: '2.5px solid var(--ink)', boxShadow: 'var(--block-shadow-md)' }}
+            >
+              See Tag Prices
+            </a>
+            <a
+              href="#visit"
+              className="btn-press inline-flex items-center gap-2 display text-sm sm:text-base px-6 py-4 rounded-[var(--radius-sm)]"
+              style={{ background: 'var(--blue)', color: '#fff', border: '2.5px solid var(--ink)', boxShadow: 'var(--block-shadow-md)' }}
+            >
+              Visit The Store
+            </a>
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="flex flex-wrap gap-x-7 gap-y-3">
+            {[
+              { icon: Tag, label: '5 Color Tags', sub: '$2 – $9' },
+              { icon: ArrowRight, label: 'New Stock', sub: 'All the time' },
+              { icon: Star, label: 'First Come', sub: 'First served' },
+            ].map(({ icon: Icon, label, sub }) => (
+              <div key={label} className="flex items-center gap-2.5">
+                <Icon size={18} color="var(--ink)" strokeWidth={2.25} aria-hidden="true" />
+                <div className="leading-tight">
+                  <div className="mono text-xs font-bold uppercase" style={{ color: 'var(--ink)' }}>{label}</div>
+                  <div className="mono text-[0.7rem]" style={{ color: 'var(--muted)' }}>{sub}</div>
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 60, rotate: -8 }}
+          animate={{ opacity: 1, y: 0, rotate: -6 }}
+          transition={{ duration: 0.8, ease: EASE_BOUNCE, delay: 0.3 }}
+          className="justify-self-center"
+        >
+          <motion.div
+            animate={{ y: [0, -14, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            whileHover={{ rotate: 0, scale: 1.03 }}
+            style={{ transformOrigin: 'center' }}
+          >
+            <div
+              className="price-tag-card relative flex flex-col items-center justify-center text-center px-12 py-14 sm:px-16 sm:py-20"
+              style={{
+                background: 'var(--yellow)',
+                border: '3px solid var(--ink)',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: 'var(--block-shadow-lg)',
+                width: 'min(90vw, 420px)',
+              }}
+            >
+              {/* hole-punch */}
+              <div
+                aria-hidden="true"
+                className="absolute rounded-full"
+                style={{ top: 22, left: 22, width: 26, height: 26, background: 'var(--paper)', border: '2.5px solid var(--ink)' }}
+              />
+              <p className="mono text-sm font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--ink)' }}>Starting At</p>
+              <p className="display leading-none" style={{ fontSize: 'clamp(5rem, 15vw, 8.5rem)', color: 'var(--ink)' }}>$2</p>
+              <p className="display text-2xl mt-2" style={{ color: 'var(--ink)' }}>Dig In.</p>
+              {/* barcode */}
+              <div aria-hidden="true" className="flex items-end gap-[2px] mt-6" style={{ height: 36 }}>
+                {[3,1,2,4,1,3,2,1,4,2,1,3,2,4,1,2].map((w, i) => (
+                  <span key={i} style={{ width: w * 1.2, height: '100%', background: 'var(--ink)' }} />
+                ))}
+              </div>
             </div>
-          </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </header>
+  )
+}
+
+/* ══════════════════════════════════════════ HOW IT WORKS ══════════════════════════════════════════ */
+function HowItWorks() {
+  const steps = [
+    { n: '01', title: 'New Stock Arrives', desc: 'Truckloads of liquidation, overstock, and returns come in every week.' },
+    { n: '02', title: 'Everything Gets Tagged', desc: 'Every item gets a color tag. The color tells you the price. No stickers to hunt for, no guessing.' },
+    { n: '03', title: 'Prices Drop Daily', desc: "Tags don't stay put. The longer an item sits, the cheaper it gets." },
+    { n: '04', title: 'You Dig In', desc: "First come, first served. What's here today might be gone tomorrow." },
+  ]
+  return (
+    <section className="py-16 sm:py-24" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <Reveal className="mb-10 max-w-2xl">
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
+            How It Works
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2rem,5vw,3.5rem)]" style={{ color: 'var(--ink)' }}>
+            From Truck To Tag To You
+          </motion.h2>
+        </Reveal>
+
+        <Reveal staggerDelay={0.08} className="grid how-grid gap-4">
+          {steps.map((s) => (
+            <motion.div
+              key={s.n}
+              variants={fadeUp}
+              className="p-6"
+              style={{ background: '#fff', border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--block-shadow-sm)' }}
+            >
+              <p className="display text-2xl mb-3" style={{ color: 'var(--red)' }}>{s.n}</p>
+              <h3 className="display text-base mb-1.5" style={{ color: 'var(--ink)' }}>{s.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>{s.desc}</p>
+            </motion.div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ TAGS ══════════════════════════════════════════ */
+function Tags() {
+  const tags = [
+    { color: 'var(--yellow)', text: 'var(--ink)', label: 'Yellow Tag', price: '$2' },
+    { color: 'var(--green)', text: 'var(--ink)', label: 'Green Tag', price: '$3' },
+    { color: 'var(--blue)', text: '#fff', label: 'Blue Tag', price: '$5' },
+    { color: 'var(--purple)', text: '#fff', label: 'Purple Tag', price: '$7' },
+    { color: 'var(--red)', text: 'var(--ink)', label: 'Red Tag', price: '$9' },
+  ]
+  return (
+    <section id="tags" className="py-16 sm:py-24" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <Reveal className="mb-10 max-w-2xl">
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
+            The Pricing System
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2rem,5vw,3.5rem)]" style={{ color: 'var(--ink)' }}>
+            Five Tags. Five Prices.
+          </motion.h2>
+        </Reveal>
+
+        <Reveal staggerDelay={0.08} className="grid tags-grid gap-4 mb-8">
+          {tags.map((t) => (
+            <motion.div
+              key={t.label}
+              variants={fadeUp}
+              className="tag-card flex flex-col items-start justify-between p-5 sm:p-6"
+              style={{ background: t.color, color: t.text, border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--block-shadow-md)', minHeight: 160 }}
+            >
+              <Tag size={22} strokeWidth={2.5} aria-hidden="true" />
+              <div>
+                <p className="display leading-none" style={{ fontSize: 'clamp(2.2rem,5vw,3rem)' }}>{t.price}</p>
+                <p className="mono text-xs font-bold uppercase tracking-wide mt-1">{t.label}</p>
+              </div>
+            </motion.div>
+          ))}
+        </Reveal>
+
+        <Reveal className="grid sm:grid-cols-2 gap-4">
+          {[
+            { title: 'Daily Markdowns', body: 'Tag prices change daily. Check the color system above to score the best deals.' },
+            { title: 'First Come, First Served', body: "Great finds don't last. Stop in early for the best selection." },
+          ].map((n) => (
+            <motion.div
+              key={n.title}
+              variants={fadeUp}
+              className="p-6"
+              style={{ background: 'transparent', border: '2.5px solid var(--ink)', borderRadius: 'var(--radius-md)' }}
+            >
+              <h3 className="display text-lg mb-1.5" style={{ color: 'var(--ink)' }}>{n.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>{n.body}</p>
+            </motion.div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ SHELF ══════════════════════════════════════════ */
+function Shelf() {
+  return (
+    <section id="shelf" className="py-16 sm:py-24" style={{ background: 'var(--ink)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="grid shelf-grid gap-10 items-center mb-10">
+          <Reveal>
+            <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--muted-on-dark)' }}>
+              Shelf Deals
+            </motion.p>
+            <motion.h2 variants={fadeUp} className="display text-[clamp(2.2rem,6vw,3.8rem)]" style={{ color: 'var(--paper)' }}>
+              Liquidation Finds. Unreal Prices.
+            </motion.h2>
+          </Reveal>
+
+          <Reveal>
+            <motion.div
+              variants={fadeUp}
+              className="p-8 sm:p-10 text-center sm:text-left"
+              style={{ background: 'var(--paper)', border: '3px solid var(--paper)', borderRadius: 'var(--radius-lg)' }}
+            >
+              <p className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>Up to</p>
+              <p className="display leading-none mb-1" style={{ fontSize: 'clamp(3rem,8vw,5rem)', color: 'var(--ink)' }}>50%</p>
+              <p className="display text-lg" style={{ color: 'var(--ink)' }}>Off Retail</p>
+            </motion.div>
+          </Reveal>
         </div>
 
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs" style={{ color: '#868d99' }}>© {new Date().getFullYear()} Bins & Deals. All rights reserved.</p>
-          <a
-            href="tel:8162224238"
-            className="flex items-center gap-2 font-bold px-5 py-2.5 rounded-xl text-white text-xs transition-opacity hover:opacity-85"
-            style={{ background: `linear-gradient(135deg, ${MINT} 0%, #00b873 100%)` }}
+        <Reveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: 'Thousands Of Items', sub: 'New stock added daily' },
+            { label: 'Happy Hunters', sub: 'Love the thrill of the find' },
+            { label: '8+ Categories', sub: 'Something for everyone' },
+            { label: 'Open 7 Days', sub: 'No day off from deals' },
+          ].map((s) => (
+            <motion.div
+              key={s.label}
+              variants={fadeUp}
+              className="p-6"
+              style={{ border: '2.5px solid var(--muted-on-dark)', borderRadius: 'var(--radius-md)' }}
+            >
+              <p className="display text-base mb-1" style={{ color: 'var(--paper)' }}>{s.label}</p>
+              <p className="mono text-xs" style={{ color: 'var(--muted-on-dark)' }}>{s.sub}</p>
+            </motion.div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ CATEGORIES ══════════════════════════════════════════ */
+function Categories() {
+  const cats = [
+    { icon: Tv, label: 'Electronics', desc: 'TVs, tablets, phones & gaming gear', badge: 'Hot', photo: photoElectronics },
+    { icon: Shirt, label: 'Clothing & Apparel', desc: 'Brand-name clothing for the family', badge: null, photo: photoClothing },
+    { icon: Package, label: 'Mystery Boxes', desc: 'Sealed surprise boxes for the true treasure hunters', badge: null, photo: photoMysteryBoxes },
+    { icon: Gamepad2, label: 'Toys & Games', desc: 'Board games, action figures & more', badge: 'New', photo: photoToys },
+  ]
+  return (
+    <section id="categories" className="py-16 sm:py-24" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <Reveal className="mb-10 max-w-2xl">
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
+            What We Sell
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2rem,5vw,3.5rem)]" style={{ color: 'var(--ink)' }}>
+            Something For Everyone
+          </motion.h2>
+        </Reveal>
+
+        <Reveal staggerDelay={0.1} className="grid cats-grid gap-5">
+          {cats.map(({ icon: Icon, label, desc, badge, photo }) => (
+            <motion.div
+              key={label}
+              variants={fadeUp}
+              className="cat-card relative p-6"
+              style={{ background: '#fff', border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--block-shadow-md)' }}
+            >
+              {badge && (
+                <span
+                  className="absolute mono text-[0.65rem] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full"
+                  style={{
+                    top: -12, right: 16,
+                    background: badge === 'Hot' ? 'var(--red)' : 'var(--green)',
+                    color: 'var(--ink)',
+                    border: '2px solid var(--ink)',
+                  }}
+                >
+                  {badge}
+                </span>
+              )}
+              {photo ? (
+                <img
+                  src={photo}
+                  alt={`${label} at Bins & Deals — ${desc}`}
+                  className="aspect-[16/10] w-full object-cover mb-4"
+                  style={{ borderRadius: 'var(--radius-sm)', border: '2px solid var(--ink)' }}
+                  loading="lazy"
+                />
+              ) : (
+                <Placeholder label={label} className="mb-4" aspect="aspect-[16/10]" />
+              )}
+              <Icon size={26} strokeWidth={2} color="var(--ink)" aria-hidden="true" />
+              <h3
+                className="display text-lg mt-4 pt-3"
+                style={{ color: 'var(--ink)', borderTop: '2px dashed var(--border)' }}
+              >
+                {label}
+              </h3>
+              <p className="text-sm mt-1.5" style={{ color: 'var(--muted)' }}>{desc}</p>
+            </motion.div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ INSIDE THE STORE ══════════════════════════════════════════ */
+function InsideStore() {
+  const shots = [
+    { src: photoShoppingDay, alt: 'Customers digging through the bins on a busy shopping day at Bins & Deals', caption: 'A regular Saturday. First come, first served — and it shows.' },
+    { src: photoInterior, alt: 'Wide view of the Bins & Deals showroom, rows of bins and fully stocked shelves', caption: "Rows of bins, wall-to-wall stock. There's always another aisle." },
+  ]
+  return (
+    <section className="py-16 sm:py-24" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <Reveal className="mb-10 max-w-2xl">
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
+            See For Yourself
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2rem,5vw,3.5rem)]" style={{ color: 'var(--ink)' }}>
+            Inside The Store
+          </motion.h2>
+        </Reveal>
+
+        <Reveal staggerDelay={0.1} className="grid sm:grid-cols-2 gap-5">
+          {shots.map((s) => (
+            <motion.div key={s.src} variants={fadeUp}>
+              <div style={{ border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--block-shadow-sm)', overflow: 'hidden' }}>
+                <img src={s.src} alt={s.alt} className="w-full aspect-[4/3] object-cover block" loading="lazy" />
+              </div>
+              <p className="mono text-xs mt-3 leading-relaxed" style={{ color: 'var(--muted)' }}>{s.caption}</p>
+            </motion.div>
+          ))}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ CLAW ══════════════════════════════════════════ */
+function Claw() {
+  return (
+    <section id="claw" className="py-16 sm:py-24" style={{ background: 'var(--ink)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 grid claw-grid gap-10 items-center">
+        <Reveal>
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--muted-on-dark)' }}>
+            In-Store Fun
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2.2rem,6vw,3.8rem)] mb-4" style={{ color: 'var(--paper)' }}>
+            Claw Machine
+          </motion.h2>
+          <motion.p variants={fadeUp} className="text-base leading-relaxed" style={{ color: 'var(--muted-on-dark)', maxWidth: '38ch' }}>
+            Right inside the store. Perfect for kids and adults. Try your luck while you shop.
+          </motion.p>
+        </Reveal>
+
+        <Reveal className="justify-self-center">
+          <motion.div
+            variants={fadeUp}
+            whileHover={{ rotate: -1, scale: 1.02 }}
+            className="relative"
+            style={{ width: 'min(90vw, 440px)' }}
           >
-            <Phone size={12} strokeWidth={2.5} /> Call Us
-          </a>
+            <img
+              src={photoClaw}
+              alt="The real claw machine inside Bins & Deals, stocked with plush prizes"
+              className="w-full aspect-[4/5] object-cover"
+              style={{ border: '3px solid var(--paper)', borderRadius: 'var(--radius-lg)', boxShadow: '8px 8px 0 rgba(245,240,230,0.25)' }}
+              loading="lazy"
+            />
+            <div
+              className="absolute flex flex-col items-center justify-center text-center"
+              style={{
+                bottom: -18, right: -18,
+                width: 92, height: 92,
+                background: 'var(--yellow)',
+                border: '3px solid var(--ink)',
+                borderRadius: 'var(--radius-md)',
+                boxShadow: 'var(--block-shadow-sm)',
+                transform: 'rotate(-6deg)',
+              }}
+            >
+              <p className="display text-base leading-none" style={{ color: 'var(--ink)' }}>$1 = 4</p>
+              <p className="mono text-[0.6rem] font-bold uppercase tracking-wide mt-1" style={{ color: 'var(--ink)' }}>Tokens</p>
+            </div>
+          </motion.div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ FAQ ══════════════════════════════════════════ */
+function FAQ() {
+  const [open, setOpen] = useState(0)
+  const faqs = [
+    { q: 'How does the pricing actually work?', a: 'Every item in the bins gets a color tag: yellow, green, blue, purple, or red. Each color is a fixed price, from $2 to $9. No scanning, no haggling — the tag says the price.' },
+    { q: 'Do prices really drop daily?', a: "Yes. Tags don't reset when new stock comes in — the whole system rotates, so older stock trends toward the cheaper tags over time. Earlier in the week usually means more selection." },
+    { q: 'What forms of payment do you take?', a: 'Cash and card, in-store. See the payment icons at checkout for the full list.' },
+    { q: 'Where does the inventory come from?', a: 'Liquidation pallets, overstock, and store returns — new, refurbished, and gently used items across every category.' },
+    { q: 'Is the claw machine actually winnable?', a: "It's a real claw machine, $1 for 4 tokens. Kids and adults both give it a shot while the grown-ups shop." },
+  ]
+  return (
+    <section className="py-16 sm:py-24" style={{ background: 'var(--paper)' }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-8">
+        <Reveal className="mb-10 max-w-2xl">
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
+            Questions
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2rem,5vw,3.5rem)]" style={{ color: 'var(--ink)' }}>
+            Before You Come In
+          </motion.h2>
+        </Reveal>
+
+        <Reveal staggerDelay={0.06} className="flex flex-col gap-3">
+          {faqs.map((f, i) => {
+            const isOpen = open === i
+            return (
+              <motion.div
+                key={f.q}
+                variants={fadeUp}
+                style={{ background: '#fff', border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', boxShadow: isOpen ? 'var(--block-shadow-sm)' : 'none' }}
+              >
+                <button
+                  onClick={() => setOpen(isOpen ? -1 : i)}
+                  aria-expanded={isOpen}
+                  className="w-full flex items-center justify-between gap-4 text-left px-5 py-4"
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                >
+                  <span className="display text-base sm:text-lg" style={{ color: 'var(--ink)' }}>{f.q}</span>
+                  <motion.span
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.25, ease: EASE_OUT }}
+                    style={{ flexShrink: 0, display: 'flex' }}
+                  >
+                    <ChevronDown size={20} color="var(--ink)" aria-hidden="true" />
+                  </motion.span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: EASE_OUT }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <p className="text-sm leading-relaxed px-5 pb-5" style={{ color: 'var(--muted)' }}>{f.a}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )
+          })}
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ VISIT ══════════════════════════════════════════ */
+function Visit() {
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' })
+  const isWeekday = today !== 'Sunday'
+  const info = [
+    {
+      icon: MapPin,
+      title: '892 Rte 291',
+      lines: ['Liberty, MO 64068', 'Next to Dollar Tree & Price Chopper'],
+      link: { text: 'Open in Google Maps ↗', href: 'https://maps.google.com/?q=892+Rte+291+Liberty+MO+64068' },
+    },
+    {
+      icon: Clock,
+      title: isWeekday ? '10AM – 8PM' : '11AM – 7PM',
+      lines: ['Mon – Sat: 10AM – 8PM', 'Sunday: 11AM – 7PM'],
+      link: null,
+    },
+    {
+      icon: Phone,
+      title: '(816) 222-4238',
+      lines: ['Call anytime', 'Cash & card accepted'],
+      link: { text: 'Call Now', href: 'tel:8162224238' },
+    },
+  ]
+  return (
+    <section
+      id="visit"
+      className="relative py-16 sm:py-24 overflow-hidden"
+      style={{
+        background: 'var(--paper)',
+        backgroundImage: 'radial-gradient(var(--border) 1.4px, transparent 1.4px)',
+        backgroundSize: '22px 22px',
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-8">
+        <Reveal className="mb-10 max-w-2xl">
+          <motion.p variants={fadeUp} className="mono text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted)' }}>
+            We're Open
+          </motion.p>
+          <motion.h2 variants={fadeUp} className="display text-[clamp(2rem,5vw,3.5rem)]" style={{ color: 'var(--ink)' }}>
+            Visit Us
+          </motion.h2>
+        </Reveal>
+
+        <div className="flex flex-col gap-8">
+          <Reveal staggerDelay={0.1} className="grid sm:grid-cols-3 gap-4">
+            {info.map(({ icon: Icon, title, lines, link }) => (
+              <motion.div
+                key={title}
+                variants={fadeUp}
+                className="p-6"
+                style={{ background: '#fff', border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--block-shadow-sm)' }}
+              >
+                <Icon size={22} strokeWidth={2.25} color="var(--ink)" aria-hidden="true" />
+                <p className="display text-lg mt-3" style={{ color: 'var(--ink)' }}>{title}</p>
+                {lines.map((l) => (
+                  <p key={l} className="text-sm mt-1" style={{ color: 'var(--muted)' }}>{l}</p>
+                ))}
+                {link && (
+                  <a
+                    href={link.href}
+                    target={link.href.startsWith('http') ? '_blank' : undefined}
+                    rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                    className="mono text-xs font-bold uppercase tracking-wide inline-block mt-3 underline"
+                    style={{ color: 'var(--blue)' }}
+                  >
+                    {link.text}
+                  </a>
+                )}
+              </motion.div>
+            ))}
+          </Reveal>
+
+          <Reveal className="grid sm:grid-cols-2 gap-4">
+            <motion.div
+              variants={fadeUp}
+              className="relative overflow-hidden flex items-center justify-center"
+              style={{ border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', height: 420, background: '#EFE8D8' }}
+            >
+              <img
+                src={photoStorefront}
+                alt="Bins & Deals storefront in Liberty, Missouri, with customers arriving"
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'center 30%' }}
+                loading="lazy"
+              />
+            </motion.div>
+            <motion.div
+              variants={fadeUp}
+              className="relative overflow-hidden"
+              style={{ border: '3px solid var(--ink)', borderRadius: 'var(--radius-md)', height: 420, background: '#EFE8D8' }}
+            >
+              <iframe
+                title="Bins & Deals location — 892 Rte 291, Liberty, MO 64068"
+                src="https://www.google.com/maps?q=892+Rte+291,+Liberty,+MO+64068&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0, display: 'block' }}
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </motion.div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ══════════════════════════════════════════ FOOTER ══════════════════════════════════════════ */
+function Footer() {
+  return (
+    <footer style={{ background: 'var(--ink)' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12 grid footer-grid gap-8">
+        <div>
+          <div className="flex items-center gap-2.5 mb-3">
+            <TagIcon size={26} />
+            <span className="display text-lg" style={{ color: 'var(--paper)' }}>Bins &amp; Deals</span>
+          </div>
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--muted-on-dark)', maxWidth: '32ch' }}>
+            Your local liquidation store for new, refurbished, and used products at unbeatable prices in Liberty, MO.
+          </p>
+        </div>
+
+        <address className="not-italic">
+          <p className="mono text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--paper)' }}>Hours</p>
+          <p className="text-sm mb-1" style={{ color: 'var(--muted-on-dark)' }}>Mon – Sat: 10:00 AM – 8:00 PM</p>
+          <p className="text-sm" style={{ color: 'var(--muted-on-dark)' }}>Sunday: 11:00 AM – 7:00 PM</p>
+        </address>
+
+        <div>
+          <p className="mono text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--paper)' }}>Find Us</p>
+          <p className="text-sm mb-1" style={{ color: 'var(--muted-on-dark)' }}>892 Rte 291, Liberty, MO 64068</p>
+          <a href="tel:8162224238" className="text-sm underline" style={{ color: 'var(--paper)' }}>(816) 222-4238</a>
+        </div>
+
+        <div>
+          <p className="mono text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--paper)' }}>Follow Us</p>
+          <div className="flex items-center gap-3">
+            <a
+              href={FB_PAGE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Bins & Deals on Facebook"
+              className="btn-press inline-flex items-center justify-center"
+              style={{ width: 44, height: 44, background: 'var(--paper)', color: 'var(--ink)', border: '2.5px solid var(--paper)', borderRadius: 'var(--radius-sm)' }}
+            >
+              <FacebookIcon size={19} />
+            </a>
+            <a
+              href={FB_MARKETPLACE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Bins & Deals on Facebook Marketplace"
+              className="btn-press inline-flex items-center justify-center"
+              style={{ width: 44, height: 44, background: 'var(--paper)', color: 'var(--ink)', border: '2.5px solid var(--paper)', borderRadius: 'var(--radius-sm)' }}
+            >
+              <Store size={19} strokeWidth={2.25} />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid var(--muted)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 py-5 flex flex-wrap items-center justify-between gap-3">
+          <p className="mono text-xs" style={{ color: 'var(--muted-on-dark)' }}>© {new Date().getFullYear()} Bins &amp; Deals. All rights reserved.</p>
+          <a href="tel:8162224238" className="mono text-xs font-bold" style={{ color: 'var(--paper)' }}>(816) 222-4238</a>
         </div>
       </div>
     </footer>
   )
 }
 
-// ─── APP ─────────────────────────────────────────────────────────────────────
+/* ══════════════════════════════════════════ APP ══════════════════════════════════════════ */
 export default function App() {
+  useEffect(() => {
+    if (!window.location.hash) return
+    const el = document.getElementById(window.location.hash.slice(1))
+    if (!el) return
+    requestAnimationFrame(() => {
+      const y = el.getBoundingClientRect().top + window.scrollY - 88
+      const prev = document.documentElement.style.scrollBehavior
+      document.documentElement.style.scrollBehavior = 'auto'
+      window.scrollTo({ top: y, behavior: 'instant' })
+      document.documentElement.style.scrollBehavior = prev
+    })
+  }, [])
+
   return (
-    <div className="min-h-screen relative" style={{ background: DARK }}>
-      {/* Global film-grain overlay for premium texture */}
-      <div className="grain" aria-hidden="true" />
-      <BackToTop />
-      <Navbar />
+    <div style={{ background: 'var(--paper)' }}>
+      <Nav />
       <Hero />
-      <TreasureHunt />
-      <ShelfDeals />
-      <ClawMachine />
-      <About />
-      <Products />
-      <FindUsOnline />
-      <Location />
-      <Hours />
-      <PaymentMethods />
+      <HowItWorks />
+      <Tags />
+      <Shelf />
+      <Categories />
+      <InsideStore />
+      <Claw />
+      <FAQ />
+      <Visit />
       <Footer />
     </div>
   )
